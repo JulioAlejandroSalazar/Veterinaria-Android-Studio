@@ -1,7 +1,7 @@
 package com.example.primeraapp.data.model
 
 import java.time.LocalDate
-import com.example.primeraapp.data.utils.DateUtils
+import com.example.primeraapp.utils.DateUtils
 
 data class Mascota(
     val nombre: String,

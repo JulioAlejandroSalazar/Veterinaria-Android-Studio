@@ -1,4 +1,4 @@
-package com.example.primeraapp.data.utils
+package com.example.primeraapp.utils
 
 import com.example.primeraapp.data.model.Medicamento
 import java.time.LocalDate

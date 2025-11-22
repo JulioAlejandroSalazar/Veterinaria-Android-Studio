@@ -1,4 +1,4 @@
-package com.example.primeraapp.data.screens
+package com.example.primeraapp.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.primeraapp.data.model.Dueño
 import com.example.primeraapp.data.model.Mascota
-import com.example.primeraapp.data.navigation.AppScreen
+import com.example.primeraapp.ui.navigation.AppScreen
 import com.example.primeraapp.ui.components.BotonVolverHome
 import java.time.LocalDate
 

@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.primeraapp.data.navigation.AppScreen
+import com.example.primeraapp.ui.navigation.AppScreen
 
 @Composable
 fun BotonVolverHome(navController: NavHostController) {

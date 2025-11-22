@@ -1,4 +1,4 @@
-package com.example.primeraapp.data.utils
+package com.example.primeraapp.utils
 
 import kotlin.reflect.KClass
 import kotlin.reflect.full.memberProperties

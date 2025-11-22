@@ -1,4 +1,4 @@
-package com.example.primeraapp.data.screens
+package com.example.primeraapp.ui.screens
 
 import android.util.Log
 import androidx.compose.foundation.clickable
@@ -14,7 +14,7 @@ import androidx.navigation.NavHostController
 import com.example.primeraapp.data.model.Consulta
 import com.example.primeraapp.data.model.Mascota
 import com.example.primeraapp.data.model.Veterinario
-import com.example.primeraapp.data.navigation.AppScreen
+import com.example.primeraapp.ui.navigation.AppScreen
 import com.example.primeraapp.ui.components.BotonVolverHome
 import java.time.LocalDate
 import java.time.LocalTime
@@ -184,6 +184,7 @@ fun RegistrarConsultaScreen(
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DropdownMenuSelector(
     items: List<String>,
@@ -191,20 +192,30 @@ fun DropdownMenuSelector(
     onSelect: (Int) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val display = if (items.isNotEmpty()) items[selectedIndex] else "n/a"
+    val selectedText = if (items.isNotEmpty()) items[selectedIndex] else "n/a"
 
-    Column {
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }
+    ) {
+
         OutlinedTextField(
-            value = display,
+            value = selectedText,
             onValueChange = {},
-            label = { Text("Seleccionar") },
             readOnly = true,
+            label = { Text("Seleccionar") },
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+            },
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { if (items.isNotEmpty()) expanded = true }
+                .menuAnchor() // NECESARIO para que funcione el dropdown
         )
 
-        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
             items.forEachIndexed { index, item ->
                 DropdownMenuItem(
                     text = { Text(item) },
@@ -217,3 +228,4 @@ fun DropdownMenuSelector(
         }
     }
 }
+

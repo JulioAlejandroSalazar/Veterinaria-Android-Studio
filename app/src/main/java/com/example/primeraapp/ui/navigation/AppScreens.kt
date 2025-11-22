@@ -1,4 +1,4 @@
-package com.example.primeraapp.data.navigation
+package com.example.primeraapp.ui.navigation
 
 sealed class AppScreen(val route: String) {
     object Home : AppScreen("home")

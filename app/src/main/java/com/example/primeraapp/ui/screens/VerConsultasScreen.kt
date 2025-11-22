@@ -1,4 +1,4 @@
-package com.example.primeraapp.data.screens
+package com.example.primeraapp.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn

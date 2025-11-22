@@ -1,4 +1,4 @@
-package com.example.primeraapp.data.screens
+package com.example.primeraapp.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
@@ -10,11 +10,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.primeraapp.data.navigation.AppScreen
+import com.example.primeraapp.ui.navigation.AppScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController: NavHostController) {
+fun HomeScreen(
+    navController: NavHostController,
+    totalMascotas: Int,
+    totalConsultas: Int,
+    ultimoDuenio: String
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -28,6 +33,14 @@ fun HomeScreen(navController: NavHostController) {
                 .padding(16.dp)
         ) {
 
+            // Mensaje de resumen
+            Text("Total de mascotas registradas: $totalMascotas")
+            Text("Total de consultas realizadas: $totalConsultas")
+            Text("Último dueño registrado: $ultimoDuenio")
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // Botones originales
             Button(
                 onClick = { navController.navigate(AppScreen.RegistrarMascota.route) },
                 modifier = Modifier.fillMaxWidth()
