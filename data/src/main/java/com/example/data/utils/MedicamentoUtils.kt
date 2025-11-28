@@ -1,4 +1,4 @@
-package com.example.primeraapp.utils
+package com.example.data.utils
 
 object MedicamentoUtils {
     fun calcularDosis(peso: Double, edad: Int): Double {

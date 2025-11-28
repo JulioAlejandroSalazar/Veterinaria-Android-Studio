@@ -10,8 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.primeraapp.data.model.Dueño
-import com.example.primeraapp.data.model.Mascota
+import com.example.data.model.Dueno
+import com.example.data.model.Mascota
 import com.example.primeraapp.ui.components.BotonVolverHome
 import com.example.primeraapp.ui.components.ProgressOverlay
 import com.example.primeraapp.ui.navigation.AppScreen
@@ -174,7 +174,7 @@ fun RegistrarMascotaScreen(
                                         nombre = nombre,
                                         especie = especie,
                                         edad = edadInt!!,
-                                        dueño = Dueño(nombreDueno, telefono, correo),
+                                        dueno = Dueno(nombreDueno, telefono, correo),
                                         fechaUltimaVacuna = fechaParsed!!
                                     )
                                 )

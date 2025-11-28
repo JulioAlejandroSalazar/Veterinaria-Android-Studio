@@ -1,4 +1,6 @@
-package com.example.primeraapp.data.model
+package com.example.data.model
+
+import kotlin.collections.iterator
 
 class Pedido(
     val usuario: Usuario,

@@ -1,13 +1,13 @@
-package com.example.primeraapp.data.model
+package com.example.data.model
 
 import java.time.LocalDate
-import com.example.primeraapp.utils.DateUtils
+import com.example.common.utils.DateUtils
 
 data class Mascota(
     val nombre: String,
     val especie: String,
     val edad: Int,
-    val dueño: Dueño,
+    val dueno: Dueno,
     val fechaUltimaVacuna: LocalDate
 ) {
     fun mostrarInformacion(): String {

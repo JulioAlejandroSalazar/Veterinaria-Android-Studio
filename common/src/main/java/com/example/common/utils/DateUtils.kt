@@ -1,4 +1,4 @@
-package com.example.primeraapp.utils
+package com.example.common.utils
 
 import java.time.LocalDate
 import java.time.LocalTime

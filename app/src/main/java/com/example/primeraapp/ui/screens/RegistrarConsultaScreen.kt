@@ -12,9 +12,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.primeraapp.data.model.Consulta
-import com.example.primeraapp.data.model.Mascota
-import com.example.primeraapp.data.model.Veterinario
+import com.example.data.model.Consulta
+import com.example.data.model.Mascota
+import com.example.data.model.Veterinario
 import com.example.primeraapp.ui.components.BotonVolverHome
 import com.example.primeraapp.ui.components.ProgressOverlay
 import com.example.primeraapp.ui.navigation.AppScreen
@@ -245,7 +245,7 @@ fun DropdownMenuSelector(
                 DropdownMenuItem(
                     text = { Text(item) },
                     onClick = {
-                        onSelect(index)   // ← envía el índice
+                        onSelect(index)
                         expanded = false
                     }
                 )

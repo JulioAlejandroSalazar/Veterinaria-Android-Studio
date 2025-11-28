@@ -1,4 +1,4 @@
-package com.example.primeraapp.data.annotations
+package com.example.data.annotations
 
 @Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.RUNTIME)

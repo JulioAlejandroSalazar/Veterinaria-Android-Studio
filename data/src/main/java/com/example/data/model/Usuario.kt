@@ -1,4 +1,4 @@
-package com.example.primeraapp.data.model
+package com.example.data.model
 
 open class Usuario(
     val nombre: String,

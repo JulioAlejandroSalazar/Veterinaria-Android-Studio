@@ -1,6 +1,6 @@
-package com.example.primeraapp.utils
+package com.example.data.utils
 
-import com.example.primeraapp.data.model.Medicamento
+import com.example.data.model.Medicamento
 import java.time.LocalDate
 
 data class PromotionPeriod(val desde: LocalDate, val hasta: LocalDate, val descuento: Double) {

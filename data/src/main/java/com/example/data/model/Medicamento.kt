@@ -1,6 +1,6 @@
-package com.example.primeraapp.data.model
+package com.example.data.model
 
-import com.example.primeraapp.data.annotations.Promocionable
+import com.example.data.annotations.Promocionable
 
 @Promocionable
 class Medicamento(

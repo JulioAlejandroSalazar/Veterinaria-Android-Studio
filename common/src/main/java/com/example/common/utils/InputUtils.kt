@@ -1,8 +1,7 @@
-package com.example.primeraapp.utils
+package com.example.common.utils
 
 object InputUtils {
 
-    // Ejemplo: se reemplaza readLine por parámetro recibido
     fun leerTextoDesdeUI(input: String): String = input.trim()
 
     fun leerEnteroDesdeUI(input: String): Int? = input.toIntOrNull()

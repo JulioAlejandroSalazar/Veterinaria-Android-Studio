@@ -1,8 +1,8 @@
-package com.example.primeraapp.utils
+package com.example.data.utils
 
-import com.example.primeraapp.data.model.Consulta
-import com.example.primeraapp.data.model.EstadoConsulta
-import com.example.primeraapp.data.model.Veterinario
+import com.example.data.model.Consulta
+import com.example.data.model.EstadoConsulta
+import com.example.data.model.Veterinario
 import java.time.LocalDate
 
 object NotificationUtils {

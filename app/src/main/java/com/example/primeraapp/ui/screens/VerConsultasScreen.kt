@@ -5,28 +5,28 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.primeraapp.data.model.Consulta
+import com.example.data.model.Consulta
 import com.example.primeraapp.ui.components.BotonVolverHome
 import com.example.primeraapp.ui.components.ProgressOverlay
 import kotlinx.coroutines.delay
+import androidx.compose.foundation.lazy.items
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VerConsultasScreen(
     navController: NavHostController,
-    consultas: List<Consulta>           // ← VOLVIÓ EL PARÁMETRO REAL
+    consultas: List<Consulta>
 ) {
     var isVisible by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
-        delay(800)           // carga suave
+        delay(800)
         isLoading = false
         isVisible = true
     }
@@ -60,7 +60,7 @@ fun VerConsultasScreen(
                             ) {
                                 Column(modifier = Modifier.padding(16.dp)) {
                                     Text("Mascota: ${consulta.mascota.nombre}")
-                                    Text("Dueño: ${consulta.mascota.dueño.nombre}")
+                                    Text("Dueño: ${consulta.mascota.dueno.nombre}")
                                     Text("Veterinario: ${consulta.veterinario.nombre}")
                                     Text("Motivo: ${consulta.motivo}")
                                     Text("Fecha: ${consulta.fecha}")

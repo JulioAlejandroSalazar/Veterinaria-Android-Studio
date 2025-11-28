@@ -12,15 +12,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.data.model.ResumenUI
 import com.example.primeraapp.ui.navigation.AppScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     navController: NavHostController,
-    totalMascotas: Int,
-    totalConsultas: Int,
-    ultimoDuenio: String?
+    resumen: ResumenUI
 ) {
 
     var isVisible by remember { mutableStateOf(false) }
@@ -91,12 +90,11 @@ fun HomeScreen(
                 Spacer(modifier = Modifier.height(20.dp))
 
                 // estadisticas
-                Text("Mascotas registradas: $totalMascotas")
-                Text("Consultas registradas: $totalConsultas")
-                Text("Último dueño registrado: ${ultimoDuenio ?: "Ninguno"}")
+                Text("Mascotas registradas: ${resumen.totalMascotas}")
+                Text("Consultas registradas: ${resumen.totalConsultas}")
+                Text("Último dueño registrado: ${resumen.ultimoDueno ?: "Ninguno"}")
 
                 Spacer(modifier = Modifier.height(30.dp))
-                // --------------------------------
 
                 Button(
                     onClick = { navController.navigate(AppScreen.RegistrarMascota.route) },
