@@ -1,25 +1,31 @@
 package com.example.primeraapp.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.primeraapp.data.model.Dueño
 import com.example.primeraapp.data.model.Mascota
-import com.example.primeraapp.ui.navigation.AppScreen
 import com.example.primeraapp.ui.components.BotonVolverHome
+import com.example.primeraapp.ui.components.ProgressOverlay
+import com.example.primeraapp.ui.navigation.AppScreen
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegistrarMascotaScreen(
     navController: NavHostController,
     mascotas: MutableList<Mascota>
 ) {
+    var isVisible by remember { mutableStateOf(false) }
 
     var nombre by remember { mutableStateOf("") }
     var especie by remember { mutableStateOf("") }
@@ -37,139 +43,162 @@ fun RegistrarMascotaScreen(
     var errorCorreo by remember { mutableStateOf("") }
     var errorFecha by remember { mutableStateOf("") }
 
-    Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp)
-    ) {
+    var isLoading by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
 
-        Text("Registrar Mascota", style = MaterialTheme.typography.headlineSmall)
+    LaunchedEffect(Unit) { isVisible = true }
 
-        Spacer(Modifier.height(16.dp))
+    Scaffold(
+        topBar = { TopAppBar(title = { Text("Registrar Mascota") }) }
+    ) { innerPadding ->
 
-        OutlinedTextField(
-            value = nombre,
-            onValueChange = { nombre = it; errorNombre = "" },
-            label = { Text("Nombre") },
-            isError = errorNombre.isNotEmpty(),
-            modifier = Modifier.fillMaxWidth()
-        )
-        if (errorNombre.isNotEmpty()) Text(errorNombre, color = Color.Red)
+        Box(Modifier.fillMaxSize()) {
 
-        OutlinedTextField(
-            value = especie,
-            onValueChange = { especie = it; errorEspecie = "" },
-            label = { Text("Especie (perro, gato...)") },
-            isError = errorEspecie.isNotEmpty(),
-            modifier = Modifier.fillMaxWidth()
-        )
-        if (errorEspecie.isNotEmpty()) Text(errorEspecie, color = Color.Red)
+            AnimatedVisibility(
+                visible = isVisible,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .padding(16.dp)
+                ) {
 
-        OutlinedTextField(
-            value = edad,
-            onValueChange = { edad = it; errorEdad = "" },
-            label = { Text("Edad (años)") },
-            isError = errorEdad.isNotEmpty(),
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-        )
-        if (errorEdad.isNotEmpty()) Text(errorEdad, color = Color.Red)
+                    Text("Total mascotas: ${mascotas.size}")
 
-        OutlinedTextField(
-            value = nombreDueno,
-            onValueChange = { nombreDueno = it; errorDueno = "" },
-            label = { Text("Nombre del dueño") },
-            isError = errorDueno.isNotEmpty(),
-            modifier = Modifier.fillMaxWidth()
-        )
-        if (errorDueno.isNotEmpty()) Text(errorDueno, color = Color.Red)
+                    Spacer(Modifier.height(12.dp))
 
-        OutlinedTextField(
-            value = telefono,
-            onValueChange = { telefono = it; errorTelefono = "" },
-            label = { Text("Teléfono") },
-            isError = errorTelefono.isNotEmpty(),
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
-        )
-        if (errorTelefono.isNotEmpty()) Text(errorTelefono, color = Color.Red)
-
-        OutlinedTextField(
-            value = correo,
-            onValueChange = { correo = it; errorCorreo = "" },
-            label = { Text("Correo electrónico") },
-            isError = errorCorreo.isNotEmpty(),
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
-        )
-        if (errorCorreo.isNotEmpty()) Text(errorCorreo, color = Color.Red)
-
-        OutlinedTextField(
-            value = fechaVacuna,
-            onValueChange = { fechaVacuna = it; errorFecha = "" },
-            label = { Text("Fecha última vacuna (AAAA-MM-DD)") },
-            isError = errorFecha.isNotEmpty(),
-            modifier = Modifier.fillMaxWidth()
-        )
-        if (errorFecha.isNotEmpty()) Text(errorFecha, color = Color.Red)
-
-        Spacer(Modifier.height(24.dp))
-
-        Button(
-            onClick = {
-
-                var valido = true
-
-                if (nombre.isBlank()) { errorNombre = "Debes ingresar un nombre"; valido = false }
-                if (especie.isBlank()) { errorEspecie = "Debes ingresar una especie"; valido = false }
-
-                val edadInt = edad.toIntOrNull()
-                if (edadInt == null || edadInt < 0) {
-                    errorEdad = "Edad inválida"
-                    valido = false
-                }
-
-                if (nombreDueno.isBlank()) { errorDueno = "Debes ingresar un dueño"; valido = false }
-
-                if (telefono.isBlank()) {
-                    errorTelefono = "Debes ingresar un teléfono"
-                    valido = false
-                }
-
-                if (!correo.contains("@") || !correo.contains(".")) {
-                    errorCorreo = "Correo inválido"
-                    valido = false
-                }
-
-                val fechaParsed = try { LocalDate.parse(fechaVacuna) } catch (_: Exception) { null }
-                if (fechaParsed == null) {
-                    errorFecha = "Formato de fecha inválido"
-                    valido = false
-                }
-
-                if (valido) {
-
-                    val nuevoDueno = Dueño(
-                        nombre = nombreDueno,
-                        telefono = telefono,
-                        correo = correo
+                    OutlinedTextField(
+                        value = nombre,
+                        onValueChange = { nombre = it; errorNombre = "" },
+                        label = { Text("Nombre") },
+                        isError = errorNombre.isNotEmpty(),
+                        modifier = Modifier.fillMaxWidth()
                     )
+                    if (errorNombre.isNotEmpty()) Text(errorNombre, color = Color.Red)
 
-                    val nuevaMascota = Mascota(
-                        nombre = nombre,
-                        especie = especie,
-                        edad = edadInt!!,
-                        dueño = nuevoDueno,
-                        fechaUltimaVacuna = fechaParsed!!
+                    OutlinedTextField(
+                        value = especie,
+                        onValueChange = { especie = it; errorEspecie = "" },
+                        label = { Text("Especie") },
+                        isError = errorEspecie.isNotEmpty(),
+                        modifier = Modifier.fillMaxWidth()
                     )
+                    if (errorEspecie.isNotEmpty()) Text(errorEspecie, color = Color.Red)
 
-                    mascotas.add(nuevaMascota)
+                    OutlinedTextField(
+                        value = edad,
+                        onValueChange = { edad = it; errorEdad = "" },
+                        label = { Text("Edad") },
+                        isError = errorEdad.isNotEmpty(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    if (errorEdad.isNotEmpty()) Text(errorEdad, color = Color.Red)
 
-                    navController.navigate(AppScreen.Home.route)
+                    OutlinedTextField(
+                        value = nombreDueno,
+                        onValueChange = { nombreDueno = it; errorDueno = "" },
+                        label = { Text("Dueño") },
+                        isError = errorDueno.isNotEmpty(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    if (errorDueno.isNotEmpty()) Text(errorDueno, color = Color.Red)
+
+                    OutlinedTextField(
+                        value = telefono,
+                        onValueChange = { telefono = it; errorTelefono = "" },
+                        label = { Text("Teléfono") },
+                        isError = errorTelefono.isNotEmpty(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    if (errorTelefono.isNotEmpty()) Text(errorTelefono, color = Color.Red)
+
+                    OutlinedTextField(
+                        value = correo,
+                        onValueChange = { correo = it; errorCorreo = "" },
+                        label = { Text("Correo") },
+                        isError = errorCorreo.isNotEmpty(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    if (errorCorreo.isNotEmpty()) Text(errorCorreo, color = Color.Red)
+
+                    OutlinedTextField(
+                        value = fechaVacuna,
+                        onValueChange = { fechaVacuna = it; errorFecha = "" },
+                        label = { Text("Fecha vacuna (AAAA-MM-DD)") },
+                        isError = errorFecha.isNotEmpty(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    if (errorFecha.isNotEmpty()) Text(errorFecha, color = Color.Red)
+
+                    Spacer(Modifier.height(20.dp))
+
+                    Button(
+                        onClick = {
+                            // VALIDACIONES
+                            var valido = true
+
+                            if (nombre.isBlank()) { errorNombre = "Campo requerido"; valido = false }
+                            if (especie.isBlank()) { errorEspecie = "Campo requerido"; valido = false }
+
+                            val edadInt = edad.toIntOrNull()
+                            if (edadInt == null || edadInt < 0) {
+                                errorEdad = "Edad inválida"
+                                valido = false
+                            }
+
+                            if (nombreDueno.isBlank()) { errorDueno = "Campo requerido"; valido = false }
+                            if (telefono.isBlank()) { errorTelefono = "Campo requerido"; valido = false }
+
+                            if (!correo.contains("@") || !correo.contains(".")) {
+                                errorCorreo = "Correo inválido"
+                                valido = false
+                            }
+
+                            val fechaParsed: LocalDate? = try { LocalDate.parse(fechaVacuna) } catch (_: Exception) { null }
+                            if (fechaParsed == null) {
+                                errorFecha = "Fecha inválida"
+                                valido = false
+                            }
+
+                            if (!valido) return@Button
+
+                            isLoading = true
+                            scope.launch {
+                                delay(1500)
+
+                                mascotas.add(
+                                    Mascota(
+                                        nombre = nombre,
+                                        especie = especie,
+                                        edad = edadInt!!,
+                                        dueño = Dueño(nombreDueno, telefono, correo),
+                                        fechaUltimaVacuna = fechaParsed!!
+                                    )
+                                )
+
+                                isLoading = false
+                                navController.navigate(AppScreen.Home.route)
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Registrar Mascota")
+                    }
+
+                    Spacer(Modifier.height(16.dp))
+
+                    BotonVolverHome(navController)
                 }
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Registrar Mascota")
+            }
+
+            ProgressOverlay(
+                isLoading = isLoading,
+                message = "Registrando mascota..."
+            )
         }
-        BotonVolverHome(navController)
     }
 }
+

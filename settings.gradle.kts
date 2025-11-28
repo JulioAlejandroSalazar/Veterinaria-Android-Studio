@@ -20,4 +20,6 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "primeraapp"
-include(":app", ":data", ":ui", ":utils")
+include(":app")
+include(":data")
+include(":common")
