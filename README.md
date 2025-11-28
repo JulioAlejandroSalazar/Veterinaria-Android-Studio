@@ -1,82 +1,119 @@
-# üêæ VeterinariaApp  
-Aplicaci√≥n m√≥vil desarrollada con **Jetpack Compose** para gestionar una veterinaria de manera simple: registro de mascotas, registro de consultas y visualizaci√≥n de consultas realizadas.
+# VeterinariaApp  
+Aplicaci®Æn m®Ævil desarrollada con **Jetpack Compose** para gestionar una veterinaria de manera simple: registro de mascotas, registro de consultas, estad®™sticas r®¢pidas y visualizaci®Æn de informaci®Æn registrada.
 
 ---
 
-## üì± Caracter√≠sticas principales
+## Caracter®™sticas principales
 
-- ‚úîÔ∏è Registrar mascotas con validaci√≥n de datos  
-- ‚úîÔ∏è Registrar consultas solo si existe una mascota registrada  
-- ‚úîÔ∏è Validaci√≥n de fechas, campos obligatorios y formato de datos  
-- ‚úîÔ∏è Lista de consultas registradas  
-- ‚úîÔ∏è Navegaci√≥n usando `NavHostController`  
-- ‚úîÔ∏è Arquitectura simple y modular
+- Registrar mascotas con validaci®Æn completa  
+- Registrar consultas solo si existe una mascota registrada  
+- Validaci®Æn de fechas, campos obligatorios y formatos  
+- Lista completa de consultas registradas  
+- C®¢lculo autom®¢tico del costo final de la consulta  
+- Pantalla de inicio con **ResumenUI** (mascotas, consultas, ®≤ltimo due?o)  
+- Animaciones con `AnimatedVisibility`, `fadeIn`, `fadeOut`  
+- Men®≤ superior con navegaci®Æn entre pantallas  
+- Navegaci®Æn con `NavHostController`  
+- Arquitectura modular con modelos, ViewModel y UI organizada  
 
 ---
 
-## üß± Tecnolog√≠as utilizadas
+## Tecnolog®™as utilizadas
 
 - **Kotlin**
 - **Jetpack Compose**
 - **Material 3**
-- **State Hoisting**
 - **Navigation Compose**
+- **State Hoisting**
+- **ViewModel**
+- **Java Time API (LocalDate, LocalTime)**
 
 ---
 
-## ‚ñ∂Ô∏è Funcionamiento
+## Funcionamiento
 
-### **1. Registrar Mascota**
-El usuario completa:
+### 1. Registrar Mascota
+
+Campos solicitados:
 - Nombre  
 - Especie  
 - Edad  
-- Nombre del due√±o  
-- Tel√©fono  
+- Nombre del due?o  
+- Tel®¶fono  
 - Correo  
-- Fecha de √∫ltima vacuna (AAAA-MM-DD)
+- Fecha de ®≤ltima vacuna (AAAA-MM-DD)
 
-Incluye validaciones:
+Validaciones:
 - Campos obligatorios  
-- Edad num√©rica  
-- Fecha v√°lida  
-- Email v√°lido  
-- Tel√©fono num√©rico  
+- Edad num®¶rica  
+- Email v®¢lido  
+- Tel®¶fono num®¶rico  
+- Fecha v®¢lida  
 
-La mascota queda almacenada en memoria usando `mutableStateListOf`.
+Las mascotas se guardan en memoria usando `mutableStateListOf` dentro del ViewModel.
 
 ---
 
-### **2. Registrar Consulta**
-Requiere que exista al menos 1 mascota registrada.
+### 2. Registrar Consulta
+
+Requiere que exista al menos una mascota registrada.
 
 Campos:
-- Nombre mascota (verificaci√≥n en lista)
-- Nombre veterinario
-- Motivo
-- Costo base
-- Fecha (AAAA-MM-DD) ‚Üí No se permiten fechas pasadas
+- Mascota seleccionada  
+- Nombre del veterinario  
+- Motivo  
+- Costo base  
+- Fecha (AAAA-MM-DD) °™ no se permiten fechas pasadas  
 - Hora (HH:MM)
 
+Incluye:
+- Validaci®Æn de fecha y hora  
+- Conversi®Æn a `LocalDate` y `LocalTime`  
+- C®¢lculo del costo final (incluye descuento si la mascota es mayor de edad)  
+- Creaci®Æn y almacenamiento del objeto `Consulta`
+
 ---
 
-### **3. Ver Consultas**
-Muestra un listado simple del resumen de cada consulta realizada.
+### 3. Ver Consultas
+
+Pantalla con listado de todas las consultas registradas, mostrando:
+- Mascota  
+- Due?o  
+- Veterinario  
+- Motivo  
+- Fecha y hora  
+- Costo final  
+- Estado  
+
+Las consultas se muestran en tarjetas con estilo Material 3.
 
 ---
 
-## üöÄ Ejecuci√≥n
+### 4. HomeScreen
+
+Incluye:
+- Animaci®Æn de entrada con `AnimatedVisibility`  
+- Resumen din®¢mico mediante `ResumenUI`  
+- Men®≤ superior con opciones:
+  - Registrar Mascota  
+  - Registrar Consulta  
+  - Ver Consultas  
+- Botones r®¢pidos para navegar
+
+---
+
+## Ejecuci®Æn
 
 1. Clonar proyecto  
 2. Abrir en **Android Studio**  
-3. Ejecutar con un emulador o dispositivo f√≠sico  
+3. Ejecutar con emulador o dispositivo f®™sico
 
 ---
 
-## üìå Requisitos
+## Requisitos
 
 - Android Studio Iguana o superior  
 - Kotlin 1.9+  
-- Min SDK 24  
+- Min SDK 24
 
 ---
