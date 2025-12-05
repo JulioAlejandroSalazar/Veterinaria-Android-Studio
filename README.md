@@ -1,24 +1,24 @@
 # VeterinariaApp  
-Aplicaci®Æn m®Ævil desarrollada con **Jetpack Compose** para gestionar una veterinaria de manera simple: registro de mascotas, registro de consultas, estad®™sticas r®¢pidas y visualizaci®Æn de informaci®Æn registrada.
+Aplicaci√≥n m√≥vil desarrollada con **Jetpack Compose** para gestionar una veterinaria de manera simple: registro de mascotas, registro de consultas, estad√≠sticas r√°pidas y visualizaci√≥n de informaci√≥n registrada.
 
 ---
 
-## Caracter®™sticas principales
+## Caracter√≠sticas principales
 
-- Registrar mascotas con validaci®Æn completa  
+- Registrar mascotas con validaci√≥n completa  
 - Registrar consultas solo si existe una mascota registrada  
-- Validaci®Æn de fechas, campos obligatorios y formatos  
+- Validaci√≥n de fechas, campos obligatorios y formatos  
 - Lista completa de consultas registradas  
-- C®¢lculo autom®¢tico del costo final de la consulta  
-- Pantalla de inicio con **ResumenUI** (mascotas, consultas, ®≤ltimo due?o)  
+- C√°lculo autom√°tico del costo final de la consulta  
+- Pantalla de inicio con **ResumenUI** (mascotas, consultas, √∫ltimo due√±o)  
 - Animaciones con `AnimatedVisibility`, `fadeIn`, `fadeOut`  
-- Men®≤ superior con navegaci®Æn entre pantallas  
-- Navegaci®Æn con `NavHostController`  
+- Men√∫ superior con navegaci√≥n entre pantallas  
+- Navegaci√≥n con `NavHostController`  
 - Arquitectura modular con modelos, ViewModel y UI organizada  
 
 ---
 
-## Tecnolog®™as utilizadas
+## Tecnolog√≠as utilizadas
 
 - **Kotlin**
 - **Jetpack Compose**
@@ -38,17 +38,17 @@ Campos solicitados:
 - Nombre  
 - Especie  
 - Edad  
-- Nombre del due?o  
-- Tel®¶fono  
+- Nombre del due√±o  
+- Tel√©fono  
 - Correo  
-- Fecha de ®≤ltima vacuna (AAAA-MM-DD)
+- Fecha de √∫ltima vacuna (AAAA-MM-DD)
 
 Validaciones:
 - Campos obligatorios  
-- Edad num®¶rica  
-- Email v®¢lido  
-- Tel®¶fono num®¶rico  
-- Fecha v®¢lida  
+- Edad num√©rica  
+- Email v√°lido  
+- Tel√©fono num√©rico  
+- Fecha v√°lida  
 
 Las mascotas se guardan en memoria usando `mutableStateListOf` dentro del ViewModel.
 
@@ -63,14 +63,14 @@ Campos:
 - Nombre del veterinario  
 - Motivo  
 - Costo base  
-- Fecha (AAAA-MM-DD) °™ no se permiten fechas pasadas  
+- Fecha (AAAA-MM-DD) ‚Äî no se permiten fechas pasadas  
 - Hora (HH:mm)
 
 Incluye:
-- Validaci®Æn de fecha y hora  
-- Conversi®Æn a `LocalDate` y `LocalTime`  
-- C®¢lculo del costo final (incluye modificaci®Æn seg®≤n edad de la mascota, si corresponde)  
-- Creaci®Æn y almacenamiento del objeto `Consulta`  
+- Validaci√≥n de fecha y hora  
+- Conversi√≥n a `LocalDate` y `LocalTime`  
+- C√°lculo del costo final (incluye modificaci√≥n seg√∫n edad de la mascota, si corresponde)  
+- Creaci√≥n y almacenamiento del objeto `Consulta`  
 
 ---
 
@@ -78,7 +78,7 @@ Incluye:
 
 Pantalla con listado de todas las consultas registradas, mostrando:
 - Mascota  
-- Due?o  
+- Due√±o  
 - Veterinario  
 - Motivo  
 - Fecha y hora  
@@ -92,21 +92,21 @@ Las consultas se muestran en tarjetas con estilo Material 3.
 ### 4. HomeScreen
 
 Incluye:
-- Animaci®Æn de entrada con `AnimatedVisibility`  
-- Resumen din®¢mico mediante `ResumenUI`  
-- Men®≤ superior con opciones:
+- Animaci√≥n de entrada con `AnimatedVisibility`  
+- Resumen din√°mico mediante `ResumenUI`  
+- Men√∫ superior con opciones:
   - Registrar Mascota  
   - Registrar Consulta  
   - Ver Consultas  
-- Botones r®¢pidos para navegaci®Æn
+- Botones r√°pidos para navegaci√≥n
 
 ---
 
-## Ejecuci®Æn
+## Ejecuci√≥n
 
 1. Clonar el proyecto  
 2. Abrir en **Android Studio**  
-3. Ejecutar en emulador o dispositivo f®™sico
+3. Ejecutar en emulador o dispositivo f√≠sico
 
 ---
 
@@ -115,5 +115,3 @@ Incluye:
 - Android Studio Iguana o superior  
 - Kotlin 1.9+  
 - Min SDK 24  
-
----
