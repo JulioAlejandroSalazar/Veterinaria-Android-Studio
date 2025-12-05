@@ -1,19 +1,21 @@
 package com.example.primeraapp
 
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.primeraapp.viewmodel.VeterinariaViewModel
 import com.example.primeraapp.ui.navigation.AppScreen
 import com.example.primeraapp.ui.screens.*
+import com.example.primeraapp.viewmodel.MascotaViewModel
+import com.example.primeraapp.viewmodel.ConsultaViewModel
 
 @Composable
-fun VeterinariaApp() {
+fun VeterinariaApp(
+    mascotaViewModel: MascotaViewModel,
+    consultaViewModel: ConsultaViewModel
+) {
 
     val navController = rememberNavController()
-    val vm: VeterinariaViewModel = viewModel()
 
     NavHost(
         navController = navController,
@@ -23,31 +25,32 @@ fun VeterinariaApp() {
         composable(AppScreen.Home.route) {
             HomeScreen(
                 navController = navController,
-                resumen = vm.resumenUI
+                mascotaViewModel = mascotaViewModel,
+                consultaViewModel = consultaViewModel
             )
         }
 
         composable(AppScreen.RegistrarMascota.route) {
             RegistrarMascotaScreen(
                 navController = navController,
-                mascotas = vm.mascotas
+                mascotaViewModel = mascotaViewModel
             )
         }
 
         composable(AppScreen.RegistrarConsulta.route) {
             RegistrarConsultaScreen(
                 navController = navController,
-                mascotas = vm.mascotas,
-                veterinarios = vm.veterinarios,
-                consultas = vm.consultas
+                mascotaViewModel = mascotaViewModel,
+                consultaViewModel = consultaViewModel
             )
         }
 
         composable(AppScreen.VerConsultas.route) {
             VerConsultasScreen(
                 navController = navController,
-                consultas = vm.consultas
+                consultaViewModel = consultaViewModel
             )
         }
     }
 }
+

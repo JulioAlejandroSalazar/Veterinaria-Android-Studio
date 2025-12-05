@@ -12,13 +12,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.data.model.Consulta
-import com.example.data.model.Mascota
-import com.example.data.model.Veterinario
+import com.example.data.DataModule
 import com.example.primeraapp.ui.components.BotonVolverHome
 import com.example.primeraapp.ui.components.ProgressOverlay
 import com.example.primeraapp.ui.navigation.AppScreen
-import kotlinx.coroutines.delay
+import com.example.primeraapp.viewmodel.ConsultaViewModel
+import com.example.primeraapp.viewmodel.MascotaViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
@@ -27,26 +26,24 @@ import java.time.LocalTime
 @Composable
 fun RegistrarConsultaScreen(
     navController: NavHostController,
-    mascotas: List<Mascota>,
-    veterinarios: List<Veterinario>,
-    consultas: MutableList<Consulta>
+    mascotaViewModel: MascotaViewModel,
+    consultaViewModel: ConsultaViewModel
 ) {
+    val mascotas = mascotaViewModel.uiState.collectAsState().value.mascotas
+    val consultas = consultaViewModel.uiState.collectAsState().value.consultas
+    val veterinarios = DataModule.veterinarios
     var isVisible by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) { isVisible = true }
-
     var seleccionadoMascotaIndex by remember { mutableStateOf(0) }
     var seleccionadoVetIndex by remember { mutableStateOf(0) }
-
     var motivo by remember { mutableStateOf("") }
     var costoBase by remember { mutableStateOf("") }
     var fechaTexto by remember { mutableStateOf(LocalDate.now().toString()) }
     var horaTexto by remember { mutableStateOf(LocalTime.now().toString().substring(0,5)) }
-
     var errorGeneral by remember { mutableStateOf("") }
     var errorMotivo by remember { mutableStateOf("") }
     var errorCosto by remember { mutableStateOf("") }
     var errorFecha by remember { mutableStateOf("") }
-
     var isLoading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
@@ -100,13 +97,20 @@ fun RegistrarConsultaScreen(
                     )
                 }
 
-                OutlinedTextField(
-                    value = motivo,
-                    onValueChange = { motivo = it; errorMotivo = "" },
-                    label = { Text("Motivo") },
-                    modifier = Modifier.fillMaxWidth()
+                Text("Motivo / Tipo de consulta")
+                val tiposConsulta = listOf("Se siente mal", "Vomita", "Se lesionó")
+
+                DropdownMenuSelector(
+                    items = tiposConsulta,
+                    selectedIndex = tiposConsulta.indexOf(motivo).coerceAtLeast(0),
+                    onSelect = {
+                        motivo = tiposConsulta[it]
+                        errorMotivo = ""
+                    }
                 )
+
                 if (errorMotivo.isNotEmpty()) Text(errorMotivo, color = Color.Red)
+
 
                 OutlinedTextField(
                     value = fechaTexto,
@@ -116,13 +120,17 @@ fun RegistrarConsultaScreen(
                 )
                 if (errorFecha.isNotEmpty()) Text(errorFecha, color = Color.Red)
 
+                var errorHora by remember { mutableStateOf("") }
+
                 OutlinedTextField(
                     value = horaTexto,
-                    onValueChange = { horaTexto = it },
+                    onValueChange = { horaTexto = it; errorHora = "" },
                     label = { Text("Hora (HH:mm)") },
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
+
+                if (errorHora.isNotEmpty()) Text(errorHora, color = Color.Red)
 
                 OutlinedTextField(
                     value = costoBase,
@@ -143,55 +151,56 @@ fun RegistrarConsultaScreen(
                         errorCosto = ""
                         errorFecha = ""
 
-                        if (motivo.isBlank()) { errorMotivo = "Debes ingresar el motivo"; valido = false }
+                        if (motivo.isBlank()) {
+                            errorMotivo = "Debes ingresar el motivo"
+                            valido = false
+                        }
 
                         val costoDouble = costoBase.toDoubleOrNull()
                         if (costoDouble == null || costoDouble < 0.0) {
                             errorCosto = "Costo inválido"
                             valido = false
+                        } else {
+                            consultaViewModel.onCostoChange(costoDouble)
                         }
 
-                        val fechaParsed = try {
-                            LocalDate.parse(fechaTexto)
-                        } catch (e: Exception) {
-                            null
-                        }
-                        if (fechaParsed == null) {
-                            errorFecha = "Fecha inválida"
+                        val fechaParsed = try { LocalDate.parse(fechaTexto) } catch (e: Exception) { null }
+                        if (fechaParsed == null || fechaParsed.isBefore(LocalDate.now())) {
+                            errorFecha = "Fecha inválida o anterior a hoy"
                             valido = false
-                        } else if (fechaParsed.isBefore(LocalDate.now())) {
-                            errorFecha = "La fecha no puede ser anterior a hoy"
-                            valido = false
+                        } else {
+                            consultaViewModel.onFechaChange(fechaParsed)
                         }
 
-                        if (veterinarios.isEmpty()) {
-                            errorGeneral = "No hay veterinarios"
+                        val horaParsed = try { LocalTime.parse(horaTexto) } catch (e: Exception) { null }
+                        if (horaParsed == null) {
+                            errorHora = "Hora inválida (usa HH:mm)"
                             valido = false
+                        } else {
+                            consultaViewModel.onHoraChange(horaParsed)
                         }
-
-                        if (!valido) return@Button
 
                         val mascota = mascotas[seleccionadoMascotaIndex]
                         val veterinario = veterinarios[seleccionadoVetIndex]
 
+                        consultaViewModel.onMotivoChange(motivo)
+                        consultaViewModel.onMascotaNombreChange(mascota.nombre)
+                        consultaViewModel.onVeterinarioChange(veterinario.nombre)
+
+                        if (!valido) return@Button
+
                         isLoading = true
                         scope.launch {
-                            delay(1500)
-
-                            consultas.add(
-                                Consulta(
-                                    mascota = mascota,
-                                    veterinario = veterinario,
-                                    fecha = fechaParsed!!,
-                                    hora = LocalTime.parse(horaTexto),
-                                    motivo = motivo,
-                                    costoBase = costoDouble!!
-                                )
-                            )
-
+                            val nuevaConsulta = consultaViewModel.crearConsulta(mascota, veterinario)
+                            if (nuevaConsulta != null) {
+                                consultaViewModel.agregarConsulta(nuevaConsulta)
+                                navController.navigate(AppScreen.Home.route)
+                            } else {
+                                errorGeneral = "Todos los campos son obligatorios"
+                            }
                             isLoading = false
-                            navController.navigate(AppScreen.Home.route)
                         }
+
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {

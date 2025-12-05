@@ -12,21 +12,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.data.model.ResumenUI
 import com.example.primeraapp.ui.navigation.AppScreen
+import com.example.primeraapp.viewmodel.ConsultaViewModel
+import com.example.primeraapp.viewmodel.MascotaViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     navController: NavHostController,
-    resumen: ResumenUI
+    mascotaViewModel: MascotaViewModel,
+    consultaViewModel: ConsultaViewModel
 ) {
 
-    var isVisible by remember { mutableStateOf(false) }
+    val mascotaState = mascotaViewModel.uiState.collectAsState()
+    val consultaState = consultaViewModel.uiState.collectAsState()
 
-    LaunchedEffect(Unit) {
-        isVisible = true
-    }
+    val mascotas = mascotaState.value.mascotas
+    val consultas = consultaState.value.consultas
+
+    val ultimoDueno = consultas.lastOrNull()?.mascota?.dueno?.nombre ?: "Ninguno"
+
+    var isVisible by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) { isVisible = true }
 
     var menuExpanded by remember { mutableStateOf(false) }
 
@@ -89,39 +96,31 @@ fun HomeScreen(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // estadisticas
-                Text("Mascotas registradas: ${resumen.totalMascotas}")
-                Text("Consultas registradas: ${resumen.totalConsultas}")
-                Text("Último dueño registrado: ${resumen.ultimoDueno ?: "Ninguno"}")
+                Text("Mascotas registradas: ${mascotas.size}")
+                Text("Consultas registradas: ${consultas.size}")
+                Text("Último dueño registrado: $ultimoDueno")
 
                 Spacer(modifier = Modifier.height(30.dp))
 
                 Button(
                     onClick = { navController.navigate(AppScreen.RegistrarMascota.route) },
                     modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Registrar Mascota")
-                }
+                ) { Text("Registrar Mascota") }
 
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Button(
                     onClick = { navController.navigate(AppScreen.RegistrarConsulta.route) },
                     modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Registrar Consulta")
-                }
+                ) { Text("Registrar Consulta") }
 
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Button(
                     onClick = { navController.navigate(AppScreen.VerConsultas.route) },
                     modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Ver Consultas")
-                }
+                ) { Text("Ver Consultas") }
             }
         }
     }
 }
-

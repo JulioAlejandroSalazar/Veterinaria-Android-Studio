@@ -64,13 +64,13 @@ Campos:
 - Motivo  
 - Costo base  
 - Fecha (AAAA-MM-DD) 〞 no se permiten fechas pasadas  
-- Hora (HH:MM)
+- Hora (HH:mm)
 
 Incluye:
 - Validaci車n de fecha y hora  
 - Conversi車n a `LocalDate` y `LocalTime`  
-- C芍lculo del costo final (incluye descuento si la mascota es mayor de edad)  
-- Creaci車n y almacenamiento del objeto `Consulta`
+- C芍lculo del costo final (incluye modificaci車n seg迆n edad de la mascota, si corresponde)  
+- Creaci車n y almacenamiento del objeto `Consulta`  
 
 ---
 
@@ -98,15 +98,15 @@ Incluye:
   - Registrar Mascota  
   - Registrar Consulta  
   - Ver Consultas  
-- Botones r芍pidos para navegar
+- Botones r芍pidos para navegaci車n
 
 ---
 
 ## Ejecuci車n
 
-1. Clonar proyecto  
+1. Clonar el proyecto  
 2. Abrir en **Android Studio**  
-3. Ejecutar con emulador o dispositivo f赤sico
+3. Ejecutar en emulador o dispositivo f赤sico
 
 ---
 
@@ -114,6 +114,6 @@ Incluye:
 
 - Android Studio Iguana o superior  
 - Kotlin 1.9+  
-- Min SDK 24
+- Min SDK 24  
 
 ---

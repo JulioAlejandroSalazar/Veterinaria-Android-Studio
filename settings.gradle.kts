@@ -23,3 +23,4 @@ rootProject.name = "primeraapp"
 include(":app")
 include(":data")
 include(":common")
+include(":domain")

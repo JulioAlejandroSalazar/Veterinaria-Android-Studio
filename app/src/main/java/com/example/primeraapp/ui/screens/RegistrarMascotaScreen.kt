@@ -10,12 +10,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.data.model.Dueno
-import com.example.data.model.Mascota
+import com.example.domain.model.Dueno
+import com.example.domain.model.Mascota
 import com.example.primeraapp.ui.components.BotonVolverHome
 import com.example.primeraapp.ui.components.ProgressOverlay
 import com.example.primeraapp.ui.navigation.AppScreen
-import kotlinx.coroutines.delay
+import com.example.primeraapp.viewmodel.MascotaViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -23,10 +23,11 @@ import java.time.LocalDate
 @Composable
 fun RegistrarMascotaScreen(
     navController: NavHostController,
-    mascotas: MutableList<Mascota>
+    mascotaViewModel: MascotaViewModel
 ) {
-    var isVisible by remember { mutableStateOf(false) }
+    val mascotas = mascotaViewModel.uiState.collectAsState().value.mascotas
 
+    var isVisible by remember { mutableStateOf(false) }
     var nombre by remember { mutableStateOf("") }
     var especie by remember { mutableStateOf("") }
     var edad by remember { mutableStateOf("") }
@@ -77,15 +78,21 @@ fun RegistrarMascotaScreen(
                         isError = errorNombre.isNotEmpty(),
                         modifier = Modifier.fillMaxWidth()
                     )
+
                     if (errorNombre.isNotEmpty()) Text(errorNombre, color = Color.Red)
 
-                    OutlinedTextField(
-                        value = especie,
-                        onValueChange = { especie = it; errorEspecie = "" },
-                        label = { Text("Especie") },
-                        isError = errorEspecie.isNotEmpty(),
-                        modifier = Modifier.fillMaxWidth()
+                    Text("Especie")
+                    val especies = listOf("Gato", "Perro", "Hamster", "Pez")
+
+                    DropdownMenuSelector(
+                        items = especies,
+                        selectedIndex = especies.indexOf(especie).coerceAtLeast(0),
+                        onSelect = {
+                            especie = especies[it]
+                            errorEspecie = ""
+                        }
                     )
+
                     if (errorEspecie.isNotEmpty()) Text(errorEspecie, color = Color.Red)
 
                     OutlinedTextField(
@@ -95,6 +102,7 @@ fun RegistrarMascotaScreen(
                         isError = errorEdad.isNotEmpty(),
                         modifier = Modifier.fillMaxWidth()
                     )
+
                     if (errorEdad.isNotEmpty()) Text(errorEdad, color = Color.Red)
 
                     OutlinedTextField(
@@ -104,6 +112,7 @@ fun RegistrarMascotaScreen(
                         isError = errorDueno.isNotEmpty(),
                         modifier = Modifier.fillMaxWidth()
                     )
+
                     if (errorDueno.isNotEmpty()) Text(errorDueno, color = Color.Red)
 
                     OutlinedTextField(
@@ -113,6 +122,7 @@ fun RegistrarMascotaScreen(
                         isError = errorTelefono.isNotEmpty(),
                         modifier = Modifier.fillMaxWidth()
                     )
+
                     if (errorTelefono.isNotEmpty()) Text(errorTelefono, color = Color.Red)
 
                     OutlinedTextField(
@@ -122,6 +132,7 @@ fun RegistrarMascotaScreen(
                         isError = errorCorreo.isNotEmpty(),
                         modifier = Modifier.fillMaxWidth()
                     )
+
                     if (errorCorreo.isNotEmpty()) Text(errorCorreo, color = Color.Red)
 
                     OutlinedTextField(
@@ -131,13 +142,13 @@ fun RegistrarMascotaScreen(
                         isError = errorFecha.isNotEmpty(),
                         modifier = Modifier.fillMaxWidth()
                     )
+
                     if (errorFecha.isNotEmpty()) Text(errorFecha, color = Color.Red)
 
                     Spacer(Modifier.height(20.dp))
 
                     Button(
                         onClick = {
-                            // VALIDACIONES
                             var valido = true
 
                             if (nombre.isBlank()) { errorNombre = "Campo requerido"; valido = false }
@@ -157,19 +168,23 @@ fun RegistrarMascotaScreen(
                                 valido = false
                             }
 
-                            val fechaParsed: LocalDate? = try { LocalDate.parse(fechaVacuna) } catch (_: Exception) { null }
+                            val fechaParsed: LocalDate? = try {
+                                LocalDate.parse(fechaVacuna)
+                            } catch (_: Exception) {
+                                null
+                            }
                             if (fechaParsed == null) {
                                 errorFecha = "Fecha inválida"
                                 valido = false
                             }
 
+
                             if (!valido) return@Button
 
                             isLoading = true
-                            scope.launch {
-                                delay(1500)
 
-                                mascotas.add(
+                            scope.launch {
+                                mascotaViewModel.agregarMascota(
                                     Mascota(
                                         nombre = nombre,
                                         especie = especie,

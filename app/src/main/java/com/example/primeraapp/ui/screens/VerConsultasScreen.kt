@@ -5,23 +5,27 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.data.model.Consulta
 import com.example.primeraapp.ui.components.BotonVolverHome
 import com.example.primeraapp.ui.components.ProgressOverlay
+import com.example.primeraapp.viewmodel.ConsultaViewModel
 import kotlinx.coroutines.delay
-import androidx.compose.foundation.lazy.items
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VerConsultasScreen(
     navController: NavHostController,
-    consultas: List<Consulta>
+    consultaViewModel: ConsultaViewModel
 ) {
+
+    val uiState by consultaViewModel.uiState.collectAsState()
+    val consultas = uiState.consultas
+
     var isVisible by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(true) }
 
@@ -84,3 +88,4 @@ fun VerConsultasScreen(
         }
     }
 }
+
