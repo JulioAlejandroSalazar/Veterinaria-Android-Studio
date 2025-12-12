@@ -49,4 +49,6 @@ class MascotaRepositoryImpl : MascotaRepository {
     private fun emit() {
         mascotasFlow.value = mascotas.toList()
     }
+
+    fun getAllSync(): List<Mascota> = mascotas.toList()
 }

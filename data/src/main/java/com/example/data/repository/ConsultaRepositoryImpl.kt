@@ -62,4 +62,6 @@ class ConsultaRepositoryImpl : ConsultaRepository {
     private fun emit() {
         consultasFlow.value = consultas.toList()
     }
+
+    fun getAllSync(): List<Consulta> = consultas.toList()
 }
