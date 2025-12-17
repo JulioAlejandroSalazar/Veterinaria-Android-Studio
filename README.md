@@ -78,8 +78,6 @@ La aplicación cuenta con un sistema de autenticación que permite:
 - Inicio de sesión con validaciones
 - Protección del acceso a las funcionalidades principales de la app
 
-> Nota: la recuperación de contraseña no se encuentra implementada en esta versión.
-
 ---
 
 ### 2. Registrar Mascota
