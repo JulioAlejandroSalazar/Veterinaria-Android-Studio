@@ -30,7 +30,11 @@ class MenuActivity : ComponentActivity() {
 
                     Button(
                         onClick = {
-                            startActivity(Intent(this@MenuActivity, MainActivity::class.java))
+                            val intent = Intent(this@MenuActivity, MainActivity::class.java).apply {
+                                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                            }
+                            startActivity(intent)
+                            finish()
                         }
                     ) {
                         Text("Volver al Inicio")

@@ -11,11 +11,13 @@ import com.example.primeraapp.ui.navigation.AppScreen
 import com.example.primeraapp.ui.screens.*
 import com.example.primeraapp.viewmodel.MascotaViewModel
 import com.example.primeraapp.viewmodel.ConsultaViewModel
+import com.example.primeraapp.viewmodel.AuthViewModel
 
 @Composable
 fun VeterinariaApp(
     mascotaViewModel: MascotaViewModel,
     consultaViewModel: ConsultaViewModel,
+    authViewModel: AuthViewModel,
     modifier: Modifier = Modifier
 ) {
 
@@ -30,7 +32,8 @@ fun VeterinariaApp(
             HomeScreen(
                 navController = navController,
                 mascotaViewModel = mascotaViewModel,
-                consultaViewModel = consultaViewModel
+                consultaViewModel = consultaViewModel,
+                authViewModel = authViewModel
             )
         }
 
@@ -56,7 +59,6 @@ fun VeterinariaApp(
             )
         }
 
-
         composable(
             route = AppScreen.RegistrarConsulta.route,
             arguments = listOf(
@@ -80,7 +82,6 @@ fun VeterinariaApp(
             )
         }
 
-
         composable(AppScreen.VerConsultas.route) {
             VerConsultasScreen(
                 navController = navController,
@@ -95,7 +96,5 @@ fun VeterinariaApp(
                 consultaViewModel = consultaViewModel
             )
         }
-
     }
 }
-

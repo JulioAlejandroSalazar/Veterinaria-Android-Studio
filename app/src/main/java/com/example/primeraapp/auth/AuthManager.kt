@@ -9,42 +9,40 @@ class AuthManager(context: Context) {
         context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
 
     fun register(usuario: Usuario): Boolean {
-        if (prefs.contains("correo")) return false
+        val userKey = "user_${usuario.correo}"
+
+        if (prefs.contains(userKey)) return false
 
         prefs.edit()
-            .putString("nombre", usuario.nombre)
-            .putString("telefono", usuario.telefono)
-            .putString("correo", usuario.correo)
-            .putString("password", usuario.password)
+            .putString("${userKey}_nombre", usuario.nombre)
+            .putString("${userKey}_telefono", usuario.telefono)
+            .putString("${userKey}_password", usuario.password)
+            .putBoolean(userKey, true)
             .apply()
 
         return true
     }
 
     fun login(correo: String, password: String): Boolean {
-        val savedCorreo = prefs.getString("correo", null)
-        val savedPass = prefs.getString("password", null)
+        val userKey = "user_$correo"
+        val savedPass = prefs.getString("${userKey}_password", null)
+        return savedPass == password
+    }
 
-        return correo == savedCorreo && password == savedPass
+    fun setLogged(correo: String) {
+        prefs.edit()
+            .putBoolean("isLogged", true)
+            .putString("currentUser", correo)
+            .apply()
+    }
+
+    fun logout() {
+        prefs.edit()
+            .remove("isLogged")
+            .remove("currentUser")
+            .apply()
     }
 
     fun isLogged(): Boolean =
         prefs.getBoolean("isLogged", false)
-
-    fun setLogged(logged: Boolean) {
-        prefs.edit().putBoolean("isLogged", logged).apply()
-    }
-
-    fun logout() {
-        prefs.edit().putBoolean("isLogged", false).apply()
-    }
-
-    fun getUsuario(): Usuario? {
-        val nombre = prefs.getString("nombre", null) ?: return null
-        val telefono = prefs.getString("telefono", null) ?: return null
-        val correo = prefs.getString("correo", null) ?: return null
-        val password = prefs.getString("password", null) ?: return null
-
-        return Usuario(nombre, telefono, correo, password)
-    }
 }

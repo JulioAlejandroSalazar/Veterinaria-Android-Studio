@@ -22,6 +22,7 @@ class AuthViewModel(context: Context) : ViewModel() {
         loginError = false
 
         if (authManager.login(correo, password)) {
+            authManager.setLogged(correo)
             isLogged = true
         } else {
             loginError = true
@@ -29,18 +30,12 @@ class AuthViewModel(context: Context) : ViewModel() {
     }
 
     fun register(usuario: Usuario): Boolean {
-        val ok = authManager.register(usuario)
-        if (ok) {
-            isLogged = true
-        }
-        return ok
+        return authManager.register(usuario)
     }
-
 
     fun logout() {
         authManager.logout()
         isLogged = false
     }
 }
-
 

@@ -1,7 +1,6 @@
 package com.example.primeraapp
 
 import android.app.AlertDialog
-import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
 import android.net.wifi.WifiManager
@@ -10,15 +9,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import com.example.data.DataModule
-import com.example.domain.model.Usuario
+import com.example.primeraapp.auth.AuthManager
 import com.example.primeraapp.receivers.WifiStateReceiver
 import com.example.primeraapp.ui.screens.LoginScreen
 import com.example.primeraapp.ui.screens.RegisterScreen
@@ -56,7 +51,10 @@ class MainActivity : ComponentActivity() {
         setContent {
 
             val context = LocalContext.current
-            val authViewModel = remember { AuthViewModel(context) }
+            val authViewModel = remember {
+                AuthViewModel(context)
+            }
+
             var showRegister by remember { mutableStateOf(false) }
 
             if (!authViewModel.isLogged) {
@@ -81,19 +79,12 @@ class MainActivity : ComponentActivity() {
                 }
 
             } else {
-                Column(
-                    modifier = Modifier.fillMaxSize()
-                ) {
 
-                    Box(
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        VeterinariaApp(
-                            mascotaViewModel = mascotaViewModel,
-                            consultaViewModel = consultaViewModel
-                        )
-                    }
-                }
+                VeterinariaApp(
+                    mascotaViewModel = mascotaViewModel,
+                    consultaViewModel = consultaViewModel,
+                    authViewModel = authViewModel
+                )
             }
         }
     }
@@ -101,7 +92,6 @@ class MainActivity : ComponentActivity() {
     fun testProvider(context: android.content.Context) {
 
         val sb = StringBuilder()
-
         sb.append("=== Mascotas ===\n")
 
         val cursorMascotas = contentResolver.query(
@@ -115,7 +105,6 @@ class MainActivity : ComponentActivity() {
                     val nombre = it.getString(it.getColumnIndexOrThrow("nombre"))
                     val especie = it.getString(it.getColumnIndexOrThrow("especie"))
                     val edad = it.getInt(it.getColumnIndexOrThrow("edad"))
-
                     sb.append("$nombre - $especie ($edad años)\n")
                 } while (it.moveToNext())
             } else {

@@ -15,7 +15,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.primeraapp.MainActivity
 import com.example.primeraapp.MenuActivity
+import com.example.primeraapp.auth.AuthManager
 import com.example.primeraapp.ui.navigation.AppScreen
+import com.example.primeraapp.viewmodel.AuthViewModel
 import com.example.primeraapp.viewmodel.ConsultaViewModel
 import com.example.primeraapp.viewmodel.MascotaViewModel
 
@@ -24,7 +26,8 @@ import com.example.primeraapp.viewmodel.MascotaViewModel
 fun HomeScreen(
     navController: NavHostController,
     mascotaViewModel: MascotaViewModel,
-    consultaViewModel: ConsultaViewModel
+    consultaViewModel: ConsultaViewModel,
+    authViewModel: AuthViewModel
 ) {
 
     val mascotaState = mascotaViewModel.uiState.collectAsState()
@@ -111,10 +114,12 @@ fun HomeScreen(
                             },
                             onClick = {
                                 menuExpanded = false
-                                (navController.context as MainActivity)
-                                    .let { it.finish() }
+
+                                authViewModel.logout()
+
                             }
                         )
+
                     }
 
                 }
