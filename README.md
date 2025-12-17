@@ -1,27 +1,54 @@
 # VeterinariaApp
 
-Aplicación móvil desarrollada con **Jetpack Compose** para gestionar una veterinaria de manera simple: registro de mascotas, consultas, estadísticas rápidas, navegación avanzada y uso de componentes fundamentales de Android como Services, Content Providers, BroadcastReceivers e Intents implícitos.
+Aplicación móvil desarrollada con **Jetpack Compose** para gestionar una veterinaria de manera simple y organizada. La app incluye **sistema de autenticación**, **CRUD completo**, registro de mascotas y consultas, estadísticas rápidas, navegación avanzada y el uso de componentes fundamentales de Android como Services, Content Providers, BroadcastReceivers e Intents.
 
 ---
 
 ## 📌 Características principales
 
+- **Sistema de autenticación de usuarios**
+
+  - Registro de usuarios
+  - Inicio de sesión seguro
+  - Validaciones de credenciales
+
+- **CRUD completo (Crear, Leer, Actualizar y Eliminar)**
+
+  - Gestión completa de mascotas
+  - Gestión completa de consultas
+
 - Registrar mascotas con validaciones completas
+
 - Registrar consultas solo si existe una mascota registrada
+
 - Validación de fechas, campos obligatorios y formatos
-- Lista completa de consultas registradas
+
+- Lista completa y organizada de consultas registradas
+
 - Cálculo automático del costo final de la consulta
+
 - Pantalla de inicio con **ResumenUI** (mascotas, consultas, último dueño)
+
 - Animaciones con `AnimatedVisibility`, `fadeIn`, `fadeOut`
+
 - Menú superior con navegación entre pantallas
+
 - **Navegación Compose** con `NavHostController`
+
 - Arquitectura con modelos, ViewModel y UI desacoplada
+
 - **Botones de editar y eliminar** en listas
+
 - **Pantalla principal más completa y validada**
+
 - **Intents implícitos para compartir información**
-- **Content Provider personalizado** para exponer mascotas/consultas
+
+- **Content Provider personalizado** para exponer mascotas y consultas
+
 - **BroadcastReceiver dinámico** para detectar cambios de Wi-Fi
+
 - **Service en background** para recordatorios
+
 - **Activities adicionales** para navegación explícita
 
 ---
@@ -33,7 +60,7 @@ Aplicación móvil desarrollada con **Jetpack Compose** para gestionar una veter
 - **Material 3**
 - **Navigation Compose**
 - **ViewModel + State Hoisting**
-- **Java Time API (LocalDate, LocalTime)**
+- **Java Time API** (`LocalDate`, `LocalTime`)
 - **Services**
 - **Content Providers**
 - **Broadcast Receivers**
@@ -43,7 +70,19 @@ Aplicación móvil desarrollada con **Jetpack Compose** para gestionar una veter
 
 ## ⚙ Funcionamiento
 
-### 1. Registrar Mascota
+### 1. Autenticación
+
+La aplicación cuenta con un sistema de autenticación que permite:
+
+- Registro de nuevos usuarios
+- Inicio de sesión con validaciones
+- Protección del acceso a las funcionalidades principales de la app
+
+> Nota: la recuperación de contraseña no se encuentra implementada en esta versión.
+
+---
+
+### 2. Registrar Mascota
 
 Campos solicitados:
 
@@ -63,11 +102,11 @@ Validaciones:
 - Teléfono numérico
 - Fecha válida
 
-Las mascotas se almacenan en el `ViewModel` mediante `mutableStateListOf`.
+Las mascotas se almacenan en el **ViewModel** mediante `mutableStateListOf`, permitiendo su creación, edición y eliminación.
 
 ---
 
-### 2. Registrar Consulta
+### 3. Registrar Consulta
 
 Requiere al menos una mascota registrada.
 
@@ -84,12 +123,12 @@ Incluye:
 
 - Validación completa
 - Conversión con `LocalDate` y `LocalTime`
-- Cálculo del costo final según edad
-- Almacenamiento del objeto `Consulta`
+- Cálculo automático del costo final según la edad de la mascota
+- Almacenamiento y edición del objeto **Consulta**
 
 ---
 
-### 3. Ver Consultas
+### 4. Ver Consultas
 
 Pantalla con listado detallado:
 
@@ -104,12 +143,12 @@ Pantalla con listado detallado:
 Incluye:
 
 - Tarjetas Material 3
-- **Botones de editar y eliminar**
-- **Opciones de compartir consulta (Intent implícito)**
+- **Botones de editar y eliminar** (CRUD completo)
+- **Opciones de compartir consulta** mediante Intent implícito
 
 ---
 
-### 4. HomeScreen
+### 5. HomeScreen
 
 Incluye:
 
@@ -125,11 +164,11 @@ Incluye:
 
 ### ✔ Activities adicionales
 
-Navegación explícita y flujos separados según requerimientos.
+Navegación explícita y flujos separados según los requerimientos del sistema.
 
 ### ✔ Service en background
 
-Servicio encargado de programar recordatorios y notificaciones.
+Servicio encargado de programar recordatorios y notificaciones automáticas.
 
 ### ✔ Content Provider
 
@@ -138,7 +177,7 @@ Exposición de datos de:
 - Mascotas
 - Consultas
 
-Para acceso desde apps externas.
+Permitendo el acceso desde aplicaciones externas.
 
 ### ✔ BroadcastReceiver dinámico
 
@@ -147,13 +186,12 @@ Receiver registrado programáticamente que detecta:
 - Cambios en el estado del Wi-Fi
 - Eventos relevantes del sistema
 
-Muestra toasts o ejecuta lógica según corresponda.
+Muestra mensajes o ejecuta lógica según corresponda.
 
 ### ✔ Intents implícitos
 
 Incluye:
 
-- **Botón Compartir** en cada consulta
 - `ShareReceiverActivity` para recibir texto de otras apps
 - Intent Filter configurado para `ACTION_SEND`
 

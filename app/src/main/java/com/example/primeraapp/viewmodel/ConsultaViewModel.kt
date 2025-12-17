@@ -30,58 +30,15 @@ class ConsultaViewModel(
     private fun observeConsultas() {
         viewModelScope.launch {
             consultaRepository.getConsultasFlow().collect { list ->
-                _uiState.update { it.copy(
-                    consultas = list,
-                    isLoading = false,
-                    errorMessage = null
-                ) }
+                _uiState.update {
+                    it.copy(
+                        consultas = list,
+                        isLoading = false,
+                        errorMessage = null
+                    )
+                }
             }
         }
-    }
-
-    fun onMascotaNombreChange(nombre: String) {
-        _uiState.update { it.copy(mascotaNombre = nombre) }
-    }
-
-    fun onVeterinarioChange(nombre: String) {
-        _uiState.update { it.copy(veterinario = nombre) }
-    }
-
-    fun onFechaChange(fecha: LocalDate) {
-        _uiState.update { it.copy(fecha = fecha) }
-    }
-
-    fun onHoraChange(hora: LocalTime) {
-        _uiState.update { it.copy(hora = hora) }
-    }
-
-    fun onMotivoChange(motivo: String) {
-        _uiState.update { it.copy(motivo = motivo) }
-    }
-
-    fun onCostoChange(costo: Double) {
-        _uiState.update { it.copy(costoBase = costo) }
-    }
-
-    fun crearConsulta(
-        mascota: Mascota,
-        veterinario: Veterinario
-    ): Consulta? {
-        val fecha = uiState.value.fecha
-        val hora = uiState.value.hora
-        val motivo = uiState.value.motivo
-        val costo = uiState.value.costoBase
-
-        if (fecha == null || hora == null || motivo.isBlank()) return null
-
-        return Consulta(
-            mascota = mascota,
-            veterinario = veterinario,
-            fecha = fecha,
-            hora = hora,
-            motivo = motivo,
-            costoBase = costo
-        )
     }
 
     fun agregarConsulta(consulta: Consulta) {
@@ -89,46 +46,84 @@ class ConsultaViewModel(
             try {
                 _uiState.update { it.copy(isLoading = true) }
                 consultaRepository.add(consulta)
-                _uiState.update { it.copy(
-                    successMessage = "Consulta registrada",
-                    isLoading = false
-                ) }
+                _uiState.update {
+                    it.copy(
+                        successMessage = "Consulta registrada",
+                        isLoading = false
+                    )
+                }
             } catch (e: Exception) {
-                _uiState.update { it.copy(
-                    errorMessage = e.message,
-                    isLoading = false
-                ) }
+                _uiState.update {
+                    it.copy(
+                        errorMessage = e.message,
+                        isLoading = false
+                    )
+                }
             }
         }
     }
 
-    fun eliminarConsulta(id: String, fecha: LocalDate, hora: LocalTime) {
+    fun actualizarConsulta(consulta: Consulta) {
         viewModelScope.launch {
             try {
-                consultaRepository.delete(id, fecha, hora)
-                _uiState.update { it.copy(successMessage = "Consulta eliminada") }
+                consultaRepository.update(consulta)
+                _uiState.update {
+                    it.copy(successMessage = "Consulta actualizada")
+                }
             } catch (e: Exception) {
-                _uiState.update { it.copy(errorMessage = e.message) }
+                _uiState.update {
+                    it.copy(errorMessage = e.message)
+                }
             }
         }
     }
 
-    fun limpiarMensajes() {
-        _uiState.update {
-            it.copy(
-                errorMessage = null,
-                successMessage = null
-            )
+    fun eliminarConsulta(id: Long) {
+        viewModelScope.launch {
+            try {
+                consultaRepository.delete(id)
+                _uiState.update {
+                    it.copy(successMessage = "Consulta eliminada")
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(errorMessage = e.message)
+                }
+            }
         }
     }
-}
 
+    suspend fun getConsultaById(id: Long): Consulta? =
+        consultaRepository.getById(id)
+
+    fun eliminarConsultasDeMascota(mascotaId: Long) {
+        viewModelScope.launch {
+            try {
+                uiState.value.consultas
+                    .filter { it.mascota.id == mascotaId }
+                    .forEach {
+                        consultaRepository.delete(it.id)
+                    }
+
+                _uiState.update {
+                    it.copy(successMessage = "Consultas eliminadas")
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(errorMessage = e.message)
+                }
+            }
+        }
+    }
+
+}
 
 class ConsultaViewModelFactory(
     private val repo: ConsultaRepository
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ConsultaViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
             return ConsultaViewModel(repo) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")

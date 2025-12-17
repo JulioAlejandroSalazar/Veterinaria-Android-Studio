@@ -4,6 +4,7 @@ import java.time.LocalDate
 import com.example.domain.utils.DateUtils
 
 data class Mascota(
+    val id: Long,
     val nombre: String,
     val especie: String,
     val edad: Int,

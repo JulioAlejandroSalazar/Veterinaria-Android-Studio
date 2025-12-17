@@ -1,5 +1,6 @@
 package com.example.primeraapp.ui.screens
 
+import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -12,6 +13,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.primeraapp.MainActivity
+import com.example.primeraapp.MenuActivity
 import com.example.primeraapp.ui.navigation.AppScreen
 import com.example.primeraapp.viewmodel.ConsultaViewModel
 import com.example.primeraapp.viewmodel.MascotaViewModel
@@ -50,20 +53,23 @@ fun HomeScreen(
                         expanded = menuExpanded,
                         onDismissRequest = { menuExpanded = false }
                     ) {
+
                         DropdownMenuItem(
                             text = { Text("Registrar Mascota") },
                             onClick = {
                                 menuExpanded = false
-                                navController.navigate(AppScreen.RegistrarMascota.route)
+                                navController.navigate(AppScreen.RegistrarConsulta.createRoute(-1))
                             }
                         )
+
                         DropdownMenuItem(
                             text = { Text("Registrar Consulta") },
                             onClick = {
                                 menuExpanded = false
-                                navController.navigate(AppScreen.RegistrarConsulta.route)
+                                navController.navigate(AppScreen.RegistrarConsulta.createRoute(-1))
                             }
                         )
+
                         DropdownMenuItem(
                             text = { Text("Ver Consultas") },
                             onClick = {
@@ -71,7 +77,46 @@ fun HomeScreen(
                                 navController.navigate(AppScreen.VerConsultas.route)
                             }
                         )
+
+                        Divider()
+
+                        DropdownMenuItem(
+                            text = { Text("Menú experimental") },
+                            onClick = {
+                                menuExpanded = false
+                                navController.context.startActivity(
+                                    Intent(navController.context, MenuActivity::class.java)
+                                )
+                            }
+                        )
+
+                        DropdownMenuItem(
+                            text = { Text("Probar ContentProvider") },
+                            onClick = {
+                                menuExpanded = false
+                                (navController.context as MainActivity).testProvider(
+                                    navController.context
+                                )
+                            }
+                        )
+
+                        Divider()
+
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    "Cerrar sesión",
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            },
+                            onClick = {
+                                menuExpanded = false
+                                (navController.context as MainActivity)
+                                    .let { it.finish() }
+                            }
+                        )
                     }
+
                 }
             )
         }
@@ -103,14 +148,14 @@ fun HomeScreen(
                 Spacer(modifier = Modifier.height(30.dp))
 
                 Button(
-                    onClick = { navController.navigate(AppScreen.RegistrarMascota.route) },
+                    onClick = { navController.navigate(AppScreen.RegistrarMascota.createRoute(-1)) },
                     modifier = Modifier.fillMaxWidth()
                 ) { Text("Registrar Mascota") }
 
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Button(
-                    onClick = { navController.navigate(AppScreen.RegistrarConsulta.route) },
+                    onClick = { navController.navigate(AppScreen.RegistrarConsulta.createRoute(-1)) },
                     modifier = Modifier.fillMaxWidth()
                 ) { Text("Registrar Consulta") }
 
@@ -120,6 +165,17 @@ fun HomeScreen(
                     onClick = { navController.navigate(AppScreen.VerConsultas.route) },
                     modifier = Modifier.fillMaxWidth()
                 ) { Text("Ver Consultas") }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Button(
+                    onClick = { navController.navigate(AppScreen.VerMascotas.route) },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Ver Mascotas")
+                }
+
+
             }
         }
     }

@@ -23,9 +23,12 @@ import java.time.LocalDate
 @Composable
 fun RegistrarMascotaScreen(
     navController: NavHostController,
-    mascotaViewModel: MascotaViewModel
+    mascotaViewModel: MascotaViewModel,
+    mascotaId: Long?
 ) {
     val mascotas = mascotaViewModel.uiState.collectAsState().value.mascotas
+
+    val esEdicion = mascotaId != null
 
     var isVisible by remember { mutableStateOf(false) }
     var nombre by remember { mutableStateOf("") }
@@ -47,10 +50,33 @@ fun RegistrarMascotaScreen(
     var isLoading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(Unit) { isVisible = true }
+    LaunchedEffect(Unit) {
+        isVisible = true
+    }
+
+    LaunchedEffect(mascotaId) {
+        if (mascotaId != null) {
+            val mascota = mascotaViewModel.getMascotaById(mascotaId)
+            mascota?.let {
+                nombre = it.nombre
+                especie = it.especie
+                edad = it.edad.toString()
+                nombreDueno = it.dueno.nombre
+                telefono = it.dueno.telefono
+                correo = it.dueno.correo
+                fechaVacuna = it.fechaUltimaVacuna.toString()
+            }
+        }
+    }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Registrar Mascota") }) }
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(if (esEdicion) "Editar Mascota" else "Registrar Mascota")
+                }
+            )
+        }
     ) { innerPadding ->
 
         Box(Modifier.fillMaxSize()) {
@@ -78,7 +104,6 @@ fun RegistrarMascotaScreen(
                         isError = errorNombre.isNotEmpty(),
                         modifier = Modifier.fillMaxWidth()
                     )
-
                     if (errorNombre.isNotEmpty()) Text(errorNombre, color = Color.Red)
 
                     Text("Especie")
@@ -92,7 +117,6 @@ fun RegistrarMascotaScreen(
                             errorEspecie = ""
                         }
                     )
-
                     if (errorEspecie.isNotEmpty()) Text(errorEspecie, color = Color.Red)
 
                     OutlinedTextField(
@@ -102,7 +126,6 @@ fun RegistrarMascotaScreen(
                         isError = errorEdad.isNotEmpty(),
                         modifier = Modifier.fillMaxWidth()
                     )
-
                     if (errorEdad.isNotEmpty()) Text(errorEdad, color = Color.Red)
 
                     OutlinedTextField(
@@ -112,7 +135,6 @@ fun RegistrarMascotaScreen(
                         isError = errorDueno.isNotEmpty(),
                         modifier = Modifier.fillMaxWidth()
                     )
-
                     if (errorDueno.isNotEmpty()) Text(errorDueno, color = Color.Red)
 
                     OutlinedTextField(
@@ -122,7 +144,6 @@ fun RegistrarMascotaScreen(
                         isError = errorTelefono.isNotEmpty(),
                         modifier = Modifier.fillMaxWidth()
                     )
-
                     if (errorTelefono.isNotEmpty()) Text(errorTelefono, color = Color.Red)
 
                     OutlinedTextField(
@@ -132,7 +153,6 @@ fun RegistrarMascotaScreen(
                         isError = errorCorreo.isNotEmpty(),
                         modifier = Modifier.fillMaxWidth()
                     )
-
                     if (errorCorreo.isNotEmpty()) Text(errorCorreo, color = Color.Red)
 
                     OutlinedTextField(
@@ -142,78 +162,86 @@ fun RegistrarMascotaScreen(
                         isError = errorFecha.isNotEmpty(),
                         modifier = Modifier.fillMaxWidth()
                     )
-
                     if (errorFecha.isNotEmpty()) Text(errorFecha, color = Color.Red)
 
-                    Spacer(Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.weight(1f))
 
-                    Button(
-                        onClick = {
-                            var valido = true
+                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
 
-                            if (nombre.isBlank()) { errorNombre = "Campo requerido"; valido = false }
-                            if (especie.isBlank()) { errorEspecie = "Campo requerido"; valido = false }
+                        Button(
+                            onClick = {
+                                var valido = true
 
-                            val edadInt = edad.toIntOrNull()
-                            if (edadInt == null || edadInt < 0) {
-                                errorEdad = "Edad inválida"
-                                valido = false
-                            }
+                                if (nombre.isBlank()) { errorNombre = "Campo requerido"; valido = false }
+                                if (especie.isBlank()) { errorEspecie = "Campo requerido"; valido = false }
 
-                            if (nombreDueno.isBlank()) { errorDueno = "Campo requerido"; valido = false }
-                            if (telefono.isBlank()) { errorTelefono = "Campo requerido"; valido = false }
+                                val edadInt = edad.toIntOrNull()
+                                if (edadInt == null || edadInt < 0) {
+                                    errorEdad = "Edad inválida"
+                                    valido = false
+                                }
 
-                            if (!correo.contains("@") || !correo.contains(".")) {
-                                errorCorreo = "Correo inválido"
-                                valido = false
-                            }
+                                if (nombreDueno.isBlank()) { errorDueno = "Campo requerido"; valido = false }
+                                if (telefono.isBlank()) { errorTelefono = "Campo requerido"; valido = false }
 
-                            val fechaParsed: LocalDate? = try {
-                                LocalDate.parse(fechaVacuna)
-                            } catch (_: Exception) {
-                                null
-                            }
-                            if (fechaParsed == null) {
-                                errorFecha = "Fecha inválida"
-                                valido = false
-                            }
+                                if (!correo.contains("@") || !correo.contains(".")) {
+                                    errorCorreo = "Correo inválido"
+                                    valido = false
+                                }
 
+                                val fechaParsed = try {
+                                    LocalDate.parse(fechaVacuna)
+                                } catch (_: Exception) {
+                                    null
+                                }
 
-                            if (!valido) return@Button
+                                if (fechaParsed == null) {
+                                    errorFecha = "Fecha inválida"
+                                    valido = false
+                                }
 
-                            isLoading = true
+                                if (!valido) return@Button
 
-                            scope.launch {
-                                mascotaViewModel.agregarMascota(
-                                    Mascota(
+                                isLoading = true
+                                scope.launch {
+                                    val mascota = Mascota(
+                                        id = mascotaId ?: System.currentTimeMillis(),
                                         nombre = nombre,
                                         especie = especie,
                                         edad = edadInt!!,
-                                        dueno = Dueno(nombreDueno, telefono, correo),
+                                        dueno = Dueno(
+                                            nombre = nombreDueno,
+                                            telefono = telefono,
+                                            correo = correo,
+                                            password = ""
+                                        ),
                                         fechaUltimaVacuna = fechaParsed!!
                                     )
-                                )
 
-                                isLoading = false
-                                navController.navigate(AppScreen.Home.route)
-                            }
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("Registrar Mascota")
+                                    if (esEdicion) {
+                                        mascotaViewModel.actualizarMascota(mascota)
+                                    } else {
+                                        mascotaViewModel.agregarMascota(mascota)
+                                    }
+
+                                    isLoading = false
+                                    navController.navigate(AppScreen.Home.route)
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(if (esEdicion) "Guardar cambios" else "Registrar Mascota")
+                        }
+
+                        BotonVolverHome(navController)
                     }
-
-                    Spacer(Modifier.height(16.dp))
-
-                    BotonVolverHome(navController)
                 }
             }
 
             ProgressOverlay(
                 isLoading = isLoading,
-                message = "Registrando mascota..."
+                message = if (esEdicion) "Guardando cambios..." else "Registrando mascota..."
             )
         }
     }
 }
-

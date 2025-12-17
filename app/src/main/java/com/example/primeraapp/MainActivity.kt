@@ -6,7 +6,6 @@ import android.content.IntentFilter
 import android.net.Uri
 import android.net.wifi.WifiManager
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -18,12 +17,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.example.primeraapp.viewmodel.MascotaViewModel
-import com.example.primeraapp.viewmodel.MascotaViewModelFactory
-import com.example.primeraapp.viewmodel.ConsultaViewModel
-import com.example.primeraapp.viewmodel.ConsultaViewModelFactory
 import com.example.data.DataModule
+import com.example.domain.model.Usuario
 import com.example.primeraapp.receivers.WifiStateReceiver
+import com.example.primeraapp.ui.screens.LoginScreen
+import com.example.primeraapp.ui.screens.RegisterScreen
+import com.example.primeraapp.viewmodel.*
 
 class MainActivity : ComponentActivity() {
 
@@ -39,8 +38,10 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        val filter = IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION)
-        registerReceiver(wifiReceiver, filter)
+        registerReceiver(
+            wifiReceiver,
+            IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION)
+        )
     }
 
     override fun onPause() {
@@ -55,53 +56,54 @@ class MainActivity : ComponentActivity() {
         setContent {
 
             val context = LocalContext.current
+            val authViewModel = remember { AuthViewModel(context) }
+            var showRegister by remember { mutableStateOf(false) }
 
-            Column(
-                modifier = Modifier.fillMaxSize()
-            ) {
+            if (!authViewModel.isLogged) {
 
-                Box(
-                    modifier = Modifier.weight(1f)
-                ) {
-                    VeterinariaApp(
-                        mascotaViewModel = mascotaViewModel,
-                        consultaViewModel = consultaViewModel
+                if (showRegister) {
+                    RegisterScreen(
+                        viewModel = authViewModel,
+                        onRegisterSuccess = {
+                            showRegister = false
+                        },
+                        onBackToLogin = {
+                            showRegister = false
+                        }
+                    )
+                } else {
+                    LoginScreen(
+                        viewModel = authViewModel,
+                        onGoToRegister = {
+                            showRegister = true
+                        }
                     )
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
-
-                TextButton(
-                    onClick = {
-                        startActivity(Intent(this@MainActivity, MenuActivity::class.java))
-                    },
-                    modifier = Modifier.fillMaxWidth()
+            } else {
+                Column(
+                    modifier = Modifier.fillMaxSize()
                 ) {
-                    Text("Menú")
-                }
 
-                Spacer(modifier = Modifier.height(8.dp))
-
-                TextButton(
-                    onClick = {
-                        testProvider(context)
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Probar ContentProvider")
+                    Box(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        VeterinariaApp(
+                            mascotaViewModel = mascotaViewModel,
+                            consultaViewModel = consultaViewModel
+                        )
+                    }
                 }
             }
         }
     }
 
-
-    private fun testProvider(context: android.content.Context) {
+    fun testProvider(context: android.content.Context) {
 
         val sb = StringBuilder()
 
         sb.append("=== Mascotas ===\n")
 
-        // Mascotas
         val cursorMascotas = contentResolver.query(
             Uri.parse("content://com.example.primeraapp.provider/mascotas"),
             null, null, null, null
@@ -123,7 +125,6 @@ class MainActivity : ComponentActivity() {
 
         sb.append("\n=== Consultas ===\n")
 
-        // Consultas
         val cursorConsultas = contentResolver.query(
             Uri.parse("content://com.example.primeraapp.provider/consultas"),
             null, null, null, null
@@ -132,10 +133,14 @@ class MainActivity : ComponentActivity() {
         cursorConsultas?.use {
             if (it.moveToFirst()) {
                 do {
-                    val mascotaNombre = it.getString(it.getColumnIndexOrThrow("mascotaNombre"))
-                    val veterinario = it.getString(it.getColumnIndexOrThrow("veterinario"))
-                    val motivo = it.getString(it.getColumnIndexOrThrow("motivo"))
-                    val fecha = it.getString(it.getColumnIndexOrThrow("fecha"))
+                    val mascotaNombre =
+                        it.getString(it.getColumnIndexOrThrow("mascotaNombre"))
+                    val veterinario =
+                        it.getString(it.getColumnIndexOrThrow("veterinario"))
+                    val motivo =
+                        it.getString(it.getColumnIndexOrThrow("motivo"))
+                    val fecha =
+                        it.getString(it.getColumnIndexOrThrow("fecha"))
 
                     sb.append("$mascotaNombre | $veterinario | $motivo | $fecha\n")
                 } while (it.moveToNext())

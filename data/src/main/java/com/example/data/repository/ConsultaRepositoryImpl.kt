@@ -12,6 +12,7 @@ class ConsultaRepositoryImpl : ConsultaRepository {
 
     private val consultas = mutableListOf<Consulta>()
     private val consultasFlow = MutableStateFlow<List<Consulta>>(emptyList())
+    private var nextId = 1L
 
     override fun getConsultasFlow(): Flow<List<Consulta>> =
         consultasFlow.asStateFlow()
@@ -19,49 +20,37 @@ class ConsultaRepositoryImpl : ConsultaRepository {
     override suspend fun getAll(): List<Consulta> =
         consultas.toList()
 
+    override suspend fun getById(id: Long): Consulta? =
+        consultas.find { it.id == id }
+
     override suspend fun getConsultasPorFecha(fecha: LocalDate): List<Consulta> =
         consultas.filter { it.fecha == fecha }
 
-    override suspend fun getConsulta(
-        mascotaNombre: String,
-        fecha: LocalDate,
-        hora: LocalTime
-    ): Consulta? =
-        consultas.find {
-            it.mascota.nombre == mascotaNombre &&
-                    it.fecha == fecha &&
-                    it.hora == hora
-        }
-
     override suspend fun add(consulta: Consulta) {
-        consultas.add(consulta)
+        val consultaConId = consulta.copy(id = nextId++)
+        consultas.add(consultaConId)
         emit()
     }
 
     override suspend fun update(consulta: Consulta) {
-        val index = consultas.indexOfFirst {
-            it.mascota.nombre == consulta.mascota.nombre &&
-                    it.fecha == consulta.fecha &&
-                    it.hora == consulta.hora
-        }
+        val index = consultas.indexOfFirst { it.id == consulta.id }
         if (index != -1) {
             consultas[index] = consulta
             emit()
         }
     }
 
-    override suspend fun delete(mascotaNombre: String, fecha: LocalDate, hora: LocalTime) {
-        val removed = consultas.removeIf {
-            it.mascota.nombre == mascotaNombre &&
-                    it.fecha == fecha &&
-                    it.hora == hora
-        }
+    override suspend fun delete(id: Long) {
+        val removed = consultas.removeIf { it.id == id }
         if (removed) emit()
     }
+
+    override fun getAllSync(): List<Consulta> =
+        consultas.toList()
+
 
     private fun emit() {
         consultasFlow.value = consultas.toList()
     }
-
-    fun getAllSync(): List<Consulta> = consultas.toList()
 }
+

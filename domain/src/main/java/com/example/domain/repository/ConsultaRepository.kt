@@ -10,22 +10,11 @@ interface ConsultaRepository {
     fun getConsultasFlow(): Flow<List<Consulta>>
 
     suspend fun getAll(): List<Consulta>
-
+    fun getAllSync(): List<Consulta>
+    suspend fun getById(id: Long): Consulta?
     suspend fun getConsultasPorFecha(fecha: LocalDate): List<Consulta>
-
-    suspend fun getConsulta(
-        mascotaNombre: String,
-        fecha: LocalDate,
-        hora: LocalTime
-    ): Consulta?
-
     suspend fun add(consulta: Consulta)
-
     suspend fun update(consulta: Consulta)
-
-    suspend fun delete(
-        mascotaNombre: String,
-        fecha: LocalDate,
-        hora: LocalTime
-    )
+    suspend fun delete(id: Long)
 }
+

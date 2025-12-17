@@ -13,6 +13,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.data.DataModule
+import com.example.domain.model.Consulta
 import com.example.primeraapp.ui.components.BotonVolverHome
 import com.example.primeraapp.ui.components.ProgressOverlay
 import com.example.primeraapp.ui.navigation.AppScreen
@@ -27,35 +28,49 @@ import java.time.LocalTime
 fun RegistrarConsultaScreen(
     navController: NavHostController,
     mascotaViewModel: MascotaViewModel,
-    consultaViewModel: ConsultaViewModel
+    consultaViewModel: ConsultaViewModel,
+    consultaId: Long?
 ) {
     val mascotas = mascotaViewModel.uiState.collectAsState().value.mascotas
-    val consultas = consultaViewModel.uiState.collectAsState().value.consultas
     val veterinarios = DataModule.veterinarios
-    var isVisible by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) { isVisible = true }
+    val scope = rememberCoroutineScope()
+
     var seleccionadoMascotaIndex by remember { mutableStateOf(0) }
     var seleccionadoVetIndex by remember { mutableStateOf(0) }
     var motivo by remember { mutableStateOf("") }
     var costoBase by remember { mutableStateOf("") }
     var fechaTexto by remember { mutableStateOf(LocalDate.now().toString()) }
-    var horaTexto by remember { mutableStateOf(LocalTime.now().toString().substring(0,5)) }
-    var errorGeneral by remember { mutableStateOf("") }
-    var errorMotivo by remember { mutableStateOf("") }
-    var errorCosto by remember { mutableStateOf("") }
-    var errorFecha by remember { mutableStateOf("") }
+    var horaTexto by remember { mutableStateOf(LocalTime.now().toString().substring(0, 5)) }
+
+    var isEditing by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
+
+    LaunchedEffect(consultaId) {
+        if (consultaId != null) {
+            isEditing = true
+            val consulta = consultaViewModel.getConsultaById(consultaId)
+
+            consulta?.let {
+                seleccionadoMascotaIndex =
+                    mascotas.indexOfFirst { m -> m.id == it.mascota.id }
+                        .coerceAtLeast(0)
+
+                seleccionadoVetIndex =
+                    veterinarios.indexOfFirst { v -> v.nombre == it.veterinario.nombre }
+                        .coerceAtLeast(0)
+
+                motivo = it.motivo
+                costoBase = it.costoBase.toString()
+                fechaTexto = it.fecha.toString()
+                horaTexto = it.hora.toString().substring(0, 5)
+            }
+        }
+    }
 
     if (mascotas.isEmpty()) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Text("Registrar consulta", style = MaterialTheme.typography.headlineSmall)
-            Text("No hay mascotas registradas.", color = Color.Red)
+        Column(Modifier.fillMaxSize().padding(16.dp)) {
+            Text("No hay mascotas registradas", color = Color.Red)
+            Spacer(Modifier.weight(1f))
             BotonVolverHome(navController)
         }
         return
@@ -63,160 +78,112 @@ fun RegistrarConsultaScreen(
 
     Box(Modifier.fillMaxSize()) {
 
-        AnimatedVisibility(
-            visible = isVisible,
-            enter = fadeIn(),
-            exit = fadeOut()
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
 
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
+            Text(
+                if (isEditing) "Editar consulta" else "Registrar consulta",
+                style = MaterialTheme.typography.headlineSmall
+            )
 
-                Text("Registrar consulta", style = MaterialTheme.typography.headlineSmall)
-                Text("Total consultas: ${consultas.size}")
+            Text("Mascota")
+            DropdownMenuSelector(
+                items = mascotas.map { it.nombre },
+                selectedIndex = seleccionadoMascotaIndex,
+                onSelect = { seleccionadoMascotaIndex = it }
+            )
 
-                Text("Seleccionar mascota")
-                DropdownMenuSelector(
-                    items = mascotas.map { it.nombre },
-                    selectedIndex = seleccionadoMascotaIndex,
-                    onSelect = { seleccionadoMascotaIndex = it }
-                )
+            Text("Veterinario")
+            DropdownMenuSelector(
+                items = veterinarios.map { it.nombre },
+                selectedIndex = seleccionadoVetIndex,
+                onSelect = { seleccionadoVetIndex = it }
+            )
 
-                Text("Seleccionar veterinario")
-                if (veterinarios.isEmpty()) {
-                    Text("No hay veterinarios", color = Color.Red)
-                } else {
-                    DropdownMenuSelector(
-                        items = veterinarios.map { it.nombre },
-                        selectedIndex = seleccionadoVetIndex,
-                        onSelect = { seleccionadoVetIndex = it }
+            Text("Motivo / Tipo de consulta")
+
+            val tiposConsulta = listOf(
+                "Se siente mal",
+                "Vomita",
+                "Se lesionó"
+            )
+
+            DropdownMenuSelector(
+                items = tiposConsulta,
+                selectedIndex = tiposConsulta.indexOf(motivo).coerceAtLeast(0),
+                onSelect = { motivo = tiposConsulta[it] }
+            )
+
+
+            OutlinedTextField(
+                value = fechaTexto,
+                onValueChange = { fechaTexto = it },
+                label = { Text("Fecha (YYYY-MM-DD)") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            OutlinedTextField(
+                value = horaTexto,
+                onValueChange = { horaTexto = it },
+                label = { Text("Hora (HH:mm)") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            OutlinedTextField(
+                value = costoBase,
+                onValueChange = { costoBase = it },
+                label = { Text("Costo base") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(Modifier.weight(1f))
+
+            Button(
+                onClick = {
+                    val mascota = mascotas[seleccionadoMascotaIndex]
+                    val veterinario = veterinarios[seleccionadoVetIndex]
+
+                    val consulta = Consulta(
+                        id = consultaId ?: System.currentTimeMillis(),
+                        mascota = mascota,
+                        veterinario = veterinario,
+                        fecha = LocalDate.parse(fechaTexto),
+                        hora = LocalTime.parse(horaTexto),
+                        motivo = motivo,
+                        costoBase = costoBase.toDouble()
                     )
-                }
 
-                Text("Motivo / Tipo de consulta")
-                val tiposConsulta = listOf("Se siente mal", "Vomita", "Se lesionó")
-
-                DropdownMenuSelector(
-                    items = tiposConsulta,
-                    selectedIndex = tiposConsulta.indexOf(motivo).coerceAtLeast(0),
-                    onSelect = {
-                        motivo = tiposConsulta[it]
-                        errorMotivo = ""
+                    isLoading = true
+                    scope.launch {
+                        if (isEditing) {
+                            consultaViewModel.actualizarConsulta(consulta)
+                        } else {
+                            consultaViewModel.agregarConsulta(consulta)
+                        }
+                        isLoading = false
+                        navController.navigate(AppScreen.Home.route)
                     }
-                )
-
-                if (errorMotivo.isNotEmpty()) Text(errorMotivo, color = Color.Red)
-
-
-                OutlinedTextField(
-                    value = fechaTexto,
-                    onValueChange = { fechaTexto = it; errorFecha = "" },
-                    label = { Text("Fecha (AAAA-MM-DD)") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                if (errorFecha.isNotEmpty()) Text(errorFecha, color = Color.Red)
-
-                var errorHora by remember { mutableStateOf("") }
-
-                OutlinedTextField(
-                    value = horaTexto,
-                    onValueChange = { horaTexto = it; errorHora = "" },
-                    label = { Text("Hora (HH:mm)") },
-                    modifier = Modifier.fillMaxWidth(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                )
-
-                if (errorHora.isNotEmpty()) Text(errorHora, color = Color.Red)
-
-                OutlinedTextField(
-                    value = costoBase,
-                    onValueChange = { costoBase = it; errorCosto = "" },
-                    label = { Text("Costo base") },
-                    modifier = Modifier.fillMaxWidth(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                )
-                if (errorCosto.isNotEmpty()) Text(errorCosto, color = Color.Red)
-
-                if (errorGeneral.isNotEmpty()) Text(errorGeneral, color = Color.Red)
-
-                Button(
-                    onClick = {
-                        var valido = true
-                        errorGeneral = ""
-                        errorMotivo = ""
-                        errorCosto = ""
-                        errorFecha = ""
-
-                        if (motivo.isBlank()) {
-                            errorMotivo = "Debes ingresar el motivo"
-                            valido = false
-                        }
-
-                        val costoDouble = costoBase.toDoubleOrNull()
-                        if (costoDouble == null || costoDouble < 0.0) {
-                            errorCosto = "Costo inválido"
-                            valido = false
-                        } else {
-                            consultaViewModel.onCostoChange(costoDouble)
-                        }
-
-                        val fechaParsed = try { LocalDate.parse(fechaTexto) } catch (e: Exception) { null }
-                        if (fechaParsed == null || fechaParsed.isBefore(LocalDate.now())) {
-                            errorFecha = "Fecha inválida o anterior a hoy"
-                            valido = false
-                        } else {
-                            consultaViewModel.onFechaChange(fechaParsed)
-                        }
-
-                        val horaParsed = try { LocalTime.parse(horaTexto) } catch (e: Exception) { null }
-                        if (horaParsed == null) {
-                            errorHora = "Hora inválida (usa HH:mm)"
-                            valido = false
-                        } else {
-                            consultaViewModel.onHoraChange(horaParsed)
-                        }
-
-                        val mascota = mascotas[seleccionadoMascotaIndex]
-                        val veterinario = veterinarios[seleccionadoVetIndex]
-
-                        consultaViewModel.onMotivoChange(motivo)
-                        consultaViewModel.onMascotaNombreChange(mascota.nombre)
-                        consultaViewModel.onVeterinarioChange(veterinario.nombre)
-
-                        if (!valido) return@Button
-
-                        isLoading = true
-                        scope.launch {
-                            val nuevaConsulta = consultaViewModel.crearConsulta(mascota, veterinario)
-                            if (nuevaConsulta != null) {
-                                consultaViewModel.agregarConsulta(nuevaConsulta)
-                                navController.navigate(AppScreen.Home.route)
-                            } else {
-                                errorGeneral = "Todos los campos son obligatorios"
-                            }
-                            isLoading = false
-                        }
-
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Registrar")
-                }
-
-                BotonVolverHome(navController)
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(if (isEditing) "Actualizar" else "Registrar")
             }
+
+            BotonVolverHome(navController)
         }
 
         ProgressOverlay(
             isLoading = isLoading,
-            message = "Registrando consulta..."
+            message = if (isEditing) "Actualizando consulta..." else "Registrando consulta..."
         )
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

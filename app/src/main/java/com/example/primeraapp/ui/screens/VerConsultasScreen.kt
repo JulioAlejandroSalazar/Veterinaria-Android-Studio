@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.primeraapp.ui.components.BotonVolverHome
 import com.example.primeraapp.ui.components.ProgressOverlay
+import com.example.primeraapp.ui.navigation.AppScreen
 import com.example.primeraapp.viewmodel.ConsultaViewModel
 import kotlinx.coroutines.delay
 
@@ -71,13 +72,42 @@ fun VerConsultasScreen(
                                     Text("Hora: ${consulta.hora}")
                                     Text("Costo final: ${consulta.calcularCostoFinal()}")
                                     Text("Estado: ${consulta.estado}")
+
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.End
+                                    ) {
+                                        TextButton(
+                                            onClick = {
+                                                consultaViewModel.eliminarConsulta(
+                                                    consulta.id
+                                                )
+                                            }
+                                        ) {
+                                            Text("Eliminar", color = MaterialTheme.colorScheme.error)
+                                        }
+                                    }
+
+                                    TextButton(
+                                        onClick = {
+                                            navController.navigate(
+                                                AppScreen.RegistrarConsulta.createRoute(consulta.id)
+                                            )
+                                        }
+                                    ) {
+                                        Text("Editar")
+                                    }
+
+
+
                                 }
                             }
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.weight(1f))
                     BotonVolverHome(navController)
+
                 }
             }
 

@@ -6,8 +6,14 @@ import java.time.LocalTime
 class Veterinario(
     nombre: String,
     val especialidad: String,
-    var disponible: Boolean
-) : Usuario(nombre, "N/A", "N/A") {
+    var disponible: Boolean,
+    password: String = ""
+) : Usuario(
+    nombre = nombre,
+    telefono = "N/A",
+    correo = "N/A",
+    password = password
+) {
 
     private val consultasAsignadas = mutableListOf<Consulta>()
 

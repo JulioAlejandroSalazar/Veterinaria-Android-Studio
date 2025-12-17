@@ -3,7 +3,8 @@ package com.example.domain.model
 open class Usuario(
     val nombre: String,
     val telefono: String,
-    var correo: String
+    var correo: String,
+    var password: String
 ) {
     operator fun component1() = nombre
     operator fun component2() = correo

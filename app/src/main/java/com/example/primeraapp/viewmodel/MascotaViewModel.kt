@@ -6,7 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.primeraapp.ui.state.MascotaUiState
 import com.example.domain.model.Mascota
 import com.example.domain.repository.MascotaRepository
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MascotaViewModel(
@@ -34,69 +37,70 @@ class MascotaViewModel(
         }
     }
 
-    fun onNombreChange(value: String) {
-        _uiState.update { it.copy(nombre = value) }
-    }
-
-    fun onEspecieChange(value: String) {
-        _uiState.update { it.copy(especie = value) }
-    }
-
-    fun onEdadChange(value: String) {
-        _uiState.update { it.copy(edad = value) }
-    }
-
-    fun onDuenoNombreChange(value: String) {
-        _uiState.update { it.copy(duenoNombre = value) }
-    }
-
     fun agregarMascota(mascota: Mascota) {
         viewModelScope.launch {
             try {
                 _uiState.update { it.copy(isLoading = true) }
-
                 mascotaRepository.add(mascota)
-
-                _uiState.update { it.copy(
-                    successMessage = "Mascota agregada correctamente",
-                    isLoading = false
-                ) }
+                _uiState.update {
+                    it.copy(
+                        successMessage = "Mascota agregada correctamente",
+                        isLoading = false
+                    )
+                }
             } catch (e: Exception) {
-                _uiState.update { it.copy(
-                    errorMessage = e.message,
-                    isLoading = false
-                ) }
+                _uiState.update {
+                    it.copy(
+                        errorMessage = e.message,
+                        isLoading = false
+                    )
+                }
             }
         }
     }
 
-    fun eliminarMascota(nombre: String, duenoNombre: String) {
+    fun actualizarMascota(mascota: Mascota) {
         viewModelScope.launch {
             try {
-                mascotaRepository.delete(nombre, duenoNombre)
-                _uiState.update { it.copy(successMessage = "Mascota eliminada") }
+                mascotaRepository.update(mascota)
+                _uiState.update {
+                    it.copy(successMessage = "Mascota actualizada")
+                }
             } catch (e: Exception) {
-                _uiState.update { it.copy(errorMessage = e.message) }
+                _uiState.update {
+                    it.copy(errorMessage = e.message)
+                }
             }
         }
     }
 
-    fun limpiarMensajes() {
-        _uiState.update {
-            it.copy(
-                errorMessage = null,
-                successMessage = null
-            )
+    fun eliminarMascota(id: Long) {
+        viewModelScope.launch {
+            try {
+                mascotaRepository.delete(id)
+                _uiState.update {
+                    it.copy(successMessage = "Mascota eliminada")
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(errorMessage = e.message)
+                }
+            }
         }
     }
-}
 
+    suspend fun getMascotaById(id: Long): Mascota? =
+        mascotaRepository.getById(id)
+
+
+}
 
 class MascotaViewModelFactory(
     private val repo: MascotaRepository
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MascotaViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
             return MascotaViewModel(repo) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
