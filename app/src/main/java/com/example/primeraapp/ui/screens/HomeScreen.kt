@@ -1,21 +1,20 @@
 package com.example.primeraapp.ui.screens
 
-import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.primeraapp.MainActivity
-import com.example.primeraapp.MenuActivity
-import com.example.primeraapp.auth.AuthManager
 import com.example.primeraapp.ui.navigation.AppScreen
 import com.example.primeraapp.viewmodel.AuthViewModel
 import com.example.primeraapp.viewmodel.ConsultaViewModel
@@ -30,14 +29,6 @@ fun HomeScreen(
     authViewModel: AuthViewModel
 ) {
 
-    val mascotaState = mascotaViewModel.uiState.collectAsState()
-    val consultaState = consultaViewModel.uiState.collectAsState()
-
-    val mascotas = mascotaState.value.mascotas
-    val consultas = consultaState.value.consultas
-
-    val ultimoDueno = consultas.lastOrNull()?.mascota?.dueno?.nombre ?: "Ninguno"
-
     var isVisible by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) { isVisible = true }
 
@@ -46,10 +37,25 @@ fun HomeScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Veterinaria App") },
+                title = {
+                    Text(
+                        text = "Veterinaria App",
+                        modifier = Modifier.semantics {
+                            contentDescription = "Título de la aplicación Veterinaria App"
+                        }
+                    )
+                },
                 actions = {
-                    IconButton(onClick = { menuExpanded = true }) {
-                        Icon(Icons.Default.Menu, contentDescription = "Menu")
+                    IconButton(
+                        onClick = { menuExpanded = true },
+                        modifier = Modifier.semantics {
+                            contentDescription = "Abrir menú de opciones"
+                        }
+                    ) {
+                        Icon(
+                            Icons.Default.Menu,
+                            contentDescription = null
+                        )
                     }
 
                     DropdownMenu(
@@ -61,7 +67,9 @@ fun HomeScreen(
                             text = { Text("Registrar Mascota") },
                             onClick = {
                                 menuExpanded = false
-                                navController.navigate(AppScreen.RegistrarConsulta.createRoute(-1))
+                                navController.navigate(
+                                    AppScreen.RegistrarMascota.createRoute(-1)
+                                )
                             }
                         )
 
@@ -69,7 +77,9 @@ fun HomeScreen(
                             text = { Text("Registrar Consulta") },
                             onClick = {
                                 menuExpanded = false
-                                navController.navigate(AppScreen.RegistrarConsulta.createRoute(-1))
+                                navController.navigate(
+                                    AppScreen.RegistrarConsulta.createRoute(-1)
+                                )
                             }
                         )
 
@@ -84,28 +94,6 @@ fun HomeScreen(
                         Divider()
 
                         DropdownMenuItem(
-                            text = { Text("Menú experimental") },
-                            onClick = {
-                                menuExpanded = false
-                                navController.context.startActivity(
-                                    Intent(navController.context, MenuActivity::class.java)
-                                )
-                            }
-                        )
-
-                        DropdownMenuItem(
-                            text = { Text("Probar ContentProvider") },
-                            onClick = {
-                                menuExpanded = false
-                                (navController.context as MainActivity).testProvider(
-                                    navController.context
-                                )
-                            }
-                        )
-
-                        Divider()
-
-                        DropdownMenuItem(
                             text = {
                                 Text(
                                     "Cerrar sesión",
@@ -114,14 +102,10 @@ fun HomeScreen(
                             },
                             onClick = {
                                 menuExpanded = false
-
                                 authViewModel.logout()
-
                             }
                         )
-
                     }
-
                 }
             )
         }
@@ -132,55 +116,135 @@ fun HomeScreen(
             enter = fadeIn(),
             exit = fadeOut()
         ) {
-            Column(
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
                     .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                Text(
-                    text = "Bienvenido a la Veterinaria",
-                    style = MaterialTheme.typography.headlineMedium
-                )
 
-                Spacer(modifier = Modifier.height(20.dp))
-
-                Text("Mascotas registradas: ${mascotas.size}")
-                Text("Consultas registradas: ${consultas.size}")
-                Text("Último dueño registrado: $ultimoDueno")
-
-                Spacer(modifier = Modifier.height(30.dp))
-
-                Button(
-                    onClick = { navController.navigate(AppScreen.RegistrarMascota.createRoute(-1)) },
-                    modifier = Modifier.fillMaxWidth()
-                ) { Text("Registrar Mascota") }
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Button(
-                    onClick = { navController.navigate(AppScreen.RegistrarConsulta.createRoute(-1)) },
-                    modifier = Modifier.fillMaxWidth()
-                ) { Text("Registrar Consulta") }
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Button(
-                    onClick = { navController.navigate(AppScreen.VerConsultas.route) },
-                    modifier = Modifier.fillMaxWidth()
-                ) { Text("Ver Consultas") }
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Button(
-                    onClick = { navController.navigate(AppScreen.VerMascotas.route) },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Ver Mascotas")
+                item {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.semantics {
+                            contentDescription = "Pantalla principal de la aplicación veterinaria"
+                        }
+                    ) {
+                        Text(
+                            text = "Bienvenido",
+                            style = MaterialTheme.typography.headlineMedium
+                        )
+                        Text(
+                            text = "Gestión de tu veterinaria",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
                 }
 
+                item {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .semantics {
+                                contentDescription = "Sección de gestión de mascotas"
+                            },
+                        elevation = CardDefaults.cardElevation(4.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Text(
+                                text = "Mascotas",
+                                style = MaterialTheme.typography.titleLarge
+                            )
+                            Text("Registra y administra las mascotas de tus clientes")
 
+                            Button(
+                                onClick = {
+                                    navController.navigate(
+                                        AppScreen.RegistrarMascota.createRoute(-1)
+                                    )
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .semantics {
+                                        contentDescription =
+                                            "Botón para registrar una nueva mascota"
+                                    }
+                            ) {
+                                Text("Registrar Mascota")
+                            }
+
+                            OutlinedButton(
+                                onClick = {
+                                    navController.navigate(AppScreen.VerMascotas.route)
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .semantics {
+                                        contentDescription =
+                                            "Botón para ver la lista de mascotas registradas"
+                                    }
+                            ) {
+                                Text("Ver Mascotas")
+                            }
+                        }
+                    }
+                }
+
+                item {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .semantics {
+                                contentDescription = "Sección de gestión de consultas veterinarias"
+                            },
+                        elevation = CardDefaults.cardElevation(4.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Text(
+                                text = "Consultas",
+                                style = MaterialTheme.typography.titleLarge
+                            )
+                            Text("Control y seguimiento de consultas médicas")
+
+                            Button(
+                                onClick = {
+                                    navController.navigate(
+                                        AppScreen.RegistrarConsulta.createRoute(-1)
+                                    )
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .semantics {
+                                        contentDescription =
+                                            "Botón para registrar una nueva consulta veterinaria"
+                                    }
+                            ) {
+                                Text("Registrar Consulta")
+                            }
+
+                            OutlinedButton(
+                                onClick = {
+                                    navController.navigate(AppScreen.VerConsultas.route)
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .semantics {
+                                        contentDescription =
+                                            "Botón para ver el historial de consultas"
+                                    }
+                            ) {
+                                Text("Ver Consultas")
+                            }
+                        }
+                    }
+                }
             }
         }
     }
