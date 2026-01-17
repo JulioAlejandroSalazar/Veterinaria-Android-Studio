@@ -14,7 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
+import androidx.compose.ui.platform.LocalContext
+import com.example.data.local.LocalStorageManager
+import com.example.primeraapp.ui.components.ConsultaActivaView
 import com.example.primeraapp.ui.navigation.AppScreen
 import com.example.primeraapp.viewmodel.AuthViewModel
 import com.example.primeraapp.viewmodel.ConsultaViewModel
@@ -33,6 +37,18 @@ fun HomeScreen(
     LaunchedEffect(Unit) { isVisible = true }
 
     var menuExpanded by remember { mutableStateOf(false) }
+    var mostrarConsultaActivaDialog by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+    val localStorage = remember { LocalStorageManager(context) }
+    var consultaActiva by remember { mutableStateOf<com.example.data.local.ConsultaActiva?>(null) }
+
+    LaunchedEffect(mostrarConsultaActivaDialog) {
+        if (mostrarConsultaActivaDialog) {
+            consultaActiva = localStorage.obtenerConsultaActiva()
+        }
+    }
+
 
     Scaffold(
         topBar = {
@@ -52,10 +68,7 @@ fun HomeScreen(
                             contentDescription = "Abrir menú de opciones"
                         }
                     ) {
-                        Icon(
-                            Icons.Default.Menu,
-                            contentDescription = null
-                        )
+                        Icon(Icons.Default.Menu, contentDescription = null)
                     }
 
                     DropdownMenu(
@@ -88,6 +101,14 @@ fun HomeScreen(
                             onClick = {
                                 menuExpanded = false
                                 navController.navigate(AppScreen.VerConsultas.route)
+                            }
+                        )
+
+                        DropdownMenuItem(
+                            text = { Text("Consulta activa") },
+                            onClick = {
+                                menuExpanded = false
+                                mostrarConsultaActivaDialog = true
                             }
                         )
 
@@ -144,21 +165,14 @@ fun HomeScreen(
 
                 item {
                     Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .semantics {
-                                contentDescription = "Sección de gestión de mascotas"
-                            },
+                        modifier = Modifier.fillMaxWidth(),
                         elevation = CardDefaults.cardElevation(4.dp)
                     ) {
                         Column(
                             modifier = Modifier.padding(16.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            Text(
-                                text = "Mascotas",
-                                style = MaterialTheme.typography.titleLarge
-                            )
+                            Text("Mascotas", style = MaterialTheme.typography.titleLarge)
                             Text("Registra y administra las mascotas de tus clientes")
 
                             Button(
@@ -167,12 +181,7 @@ fun HomeScreen(
                                         AppScreen.RegistrarMascota.createRoute(-1)
                                     )
                                 },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .semantics {
-                                        contentDescription =
-                                            "Botón para registrar una nueva mascota"
-                                    }
+                                modifier = Modifier.fillMaxWidth()
                             ) {
                                 Text("Registrar Mascota")
                             }
@@ -181,12 +190,7 @@ fun HomeScreen(
                                 onClick = {
                                     navController.navigate(AppScreen.VerMascotas.route)
                                 },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .semantics {
-                                        contentDescription =
-                                            "Botón para ver la lista de mascotas registradas"
-                                    }
+                                modifier = Modifier.fillMaxWidth()
                             ) {
                                 Text("Ver Mascotas")
                             }
@@ -196,21 +200,14 @@ fun HomeScreen(
 
                 item {
                     Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .semantics {
-                                contentDescription = "Sección de gestión de consultas veterinarias"
-                            },
+                        modifier = Modifier.fillMaxWidth(),
                         elevation = CardDefaults.cardElevation(4.dp)
                     ) {
                         Column(
                             modifier = Modifier.padding(16.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            Text(
-                                text = "Consultas",
-                                style = MaterialTheme.typography.titleLarge
-                            )
+                            Text("Consultas", style = MaterialTheme.typography.titleLarge)
                             Text("Control y seguimiento de consultas médicas")
 
                             Button(
@@ -219,12 +216,7 @@ fun HomeScreen(
                                         AppScreen.RegistrarConsulta.createRoute(-1)
                                     )
                                 },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .semantics {
-                                        contentDescription =
-                                            "Botón para registrar una nueva consulta veterinaria"
-                                    }
+                                modifier = Modifier.fillMaxWidth()
                             ) {
                                 Text("Registrar Consulta")
                             }
@@ -233,15 +225,50 @@ fun HomeScreen(
                                 onClick = {
                                     navController.navigate(AppScreen.VerConsultas.route)
                                 },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .semantics {
-                                        contentDescription =
-                                            "Botón para ver el historial de consultas"
-                                    }
+                                modifier = Modifier.fillMaxWidth()
                             ) {
                                 Text("Ver Consultas")
                             }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if (mostrarConsultaActivaDialog) {
+        Dialog(onDismissRequest = { mostrarConsultaActivaDialog = false }) {
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(24.dp),
+                contentAlignment = Alignment.Center
+            ) {
+
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    elevation = CardDefaults.cardElevation(8.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+
+                        Text(
+                            text = "Consulta activa",
+                            style = MaterialTheme.typography.titleLarge
+                        )
+
+                        consultaActiva?.let {
+                            ConsultaActivaView(consulta = it)
+                        } ?: Text("No hay una consulta activa")
+
+                        Button(
+                            onClick = { mostrarConsultaActivaDialog = false },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Cerrar")
                         }
                     }
                 }

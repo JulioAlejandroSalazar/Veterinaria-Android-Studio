@@ -1,5 +1,7 @@
 package com.example.primeraapp.ui.screens
 
+import androidx.compose.ui.platform.LocalContext
+import com.example.data.local.LocalStorageManager
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -44,6 +46,10 @@ fun RegistrarConsultaScreen(
 
     var isEditing by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+    val localStorage = remember { LocalStorageManager(context) }
+
 
     LaunchedEffect(consultaId) {
         if (consultaId != null) {
@@ -165,9 +171,19 @@ fun RegistrarConsultaScreen(
                         } else {
                             consultaViewModel.agregarConsulta(consulta)
                         }
+
+                        localStorage.guardarConsultaActiva(
+                            mascotaNombre = mascota.nombre,
+                            mascotaEspecie = mascota.especie,
+                            mascotaEdad = mascota.edad,
+                            duenoNombre = mascota.dueno.nombre,
+                            motivoConsulta = consulta.motivo
+                        )
+
                         isLoading = false
                         navController.navigate(AppScreen.Home.route)
                     }
+
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {

@@ -1,45 +1,47 @@
 # VeterinariaApp
 
-Aplicación móvil desarrollada con **Jetpack Compose** para gestionar una veterinaria de manera simple y organizada. La app incluye **sistema de autenticación**, **CRUD completo**, registro de mascotas y consultas, estadísticas rápidas, navegación avanzada y el uso de componentes fundamentales de Android como Services, Content Providers, BroadcastReceivers e Intents.
+Aplicación móvil desarrollada con **Jetpack Compose** para gestionar una veterinaria de manera simple y organizada. La app incluye **sistema de autenticación**, **CRUD completo**, registro de mascotas y consultas, navegación avanzada y el uso de componentes fundamentales de Android como Services, Content Providers, BroadcastReceivers e Intents.
+
+Además, incorpora **persistencia local de datos** para el manejo de una **consulta activa**, accesible desde la pantalla principal incluso sin conexión a internet.
 
 ---
 
 ## 📌 Características principales
 
 - **Sistema de autenticación de usuarios**
-
   - Registro de usuarios
   - Inicio de sesión seguro
   - Validaciones de credenciales
 
 - **CRUD completo (Crear, Leer, Actualizar y Eliminar)**
-
   - Gestión completa de mascotas
   - Gestión completa de consultas
 
-- Registrar mascotas con validaciones completas
-
-- Registrar consultas solo si existe una mascota registrada
-
-- Validación de fechas, campos obligatorios y formatos
-
-- Lista completa y organizada de consultas registradas
-
-- Cálculo automático del costo final de la consulta
+- Registrar mascotas con validaciones completas  
+- Registrar consultas solo si existe una mascota registrada  
+- Validación de fechas, campos obligatorios y formatos  
+- Lista completa y organizada de consultas registradas  
+- Cálculo automático del costo final de la consulta  
 
 - Pantalla de inicio con **ResumenUI** (mascotas, consultas, último dueño)
 
 - Animaciones con `AnimatedVisibility`, `fadeIn`, `fadeOut`
 
-- Menú superior con navegación entre pantallas
+- Menú superior con navegación entre pantallas  
+- Menú lateral tipo hamburguesa con acciones adicionales
+
+- **Visualización de consulta activa**
+  - Accesible desde el menú del Home
+  - Se muestra en un **diálogo modal**
+  - Oscurece el resto de la aplicación
+  - Indica cuando no existe una consulta activa
+  - Persistencia local mediante **SharedPreferences**
 
 - **Navegación Compose** con `NavHostController`
 
-- Arquitectura con modelos, ViewModel y UI desacoplada
+- Arquitectura basada en **Model – ViewModel – UI**
 
 - **Botones de editar y eliminar** en listas
-
-- **Pantalla principal más completa y validada**
 
 - **Intents implícitos para compartir información**
 
@@ -60,6 +62,7 @@ Aplicación móvil desarrollada con **Jetpack Compose** para gestionar una veter
 - **Material 3**
 - **Navigation Compose**
 - **ViewModel + State Hoisting**
+- **SharedPreferences**
 - **Java Time API** (`LocalDate`, `LocalTime`)
 - **Services**
 - **Content Providers**
@@ -74,33 +77,33 @@ Aplicación móvil desarrollada con **Jetpack Compose** para gestionar una veter
 
 La aplicación cuenta con un sistema de autenticación que permite:
 
-- Registro de nuevos usuarios
-- Inicio de sesión con validaciones
-- Protección del acceso a las funcionalidades principales de la app
+- Registro de nuevos usuarios  
+- Inicio de sesión con validaciones  
+- Protección del acceso a las funcionalidades principales  
 
 ---
 
 ### 2. Registrar Mascota
 
-Campos solicitados:
+**Campos solicitados:**
 
-- Nombre
-- Especie
-- Edad
-- Nombre del dueño
-- Teléfono
-- Correo
+- Nombre  
+- Especie  
+- Edad  
+- Nombre del dueño  
+- Teléfono  
+- Correo  
 - Fecha de última vacuna (AAAA-MM-DD)
 
-Validaciones:
+**Validaciones:**
 
-- Campos obligatorios
-- Edad numérica
-- Email válido
-- Teléfono numérico
-- Fecha válida
+- Campos obligatorios  
+- Edad numérica  
+- Email válido  
+- Teléfono numérico  
+- Fecha válida  
 
-Las mascotas se almacenan en el **ViewModel** mediante `mutableStateListOf`, permitiendo su creación, edición y eliminación.
+Las mascotas se almacenan en el **ViewModel** mediante `mutableStateListOf`.
 
 ---
 
@@ -108,21 +111,21 @@ Las mascotas se almacenan en el **ViewModel** mediante `mutableStateListOf`, per
 
 Requiere al menos una mascota registrada.
 
-Campos:
+**Campos:**
 
-- Mascota seleccionada
-- Veterinario
-- Motivo
-- Costo base
-- Fecha (AAAA-MM-DD) — sin fechas pasadas
+- Mascota seleccionada  
+- Veterinario  
+- Motivo  
+- Costo base  
+- Fecha (AAAA-MM-DD) — sin fechas pasadas  
 - Hora (HH:mm)
 
 Incluye:
 
-- Validación completa
-- Conversión con `LocalDate` y `LocalTime`
-- Cálculo automático del costo final según la edad de la mascota
-- Almacenamiento y edición del objeto **Consulta**
+- Validación completa  
+- Uso de `LocalDate` y `LocalTime`  
+- Cálculo automático del costo final  
+- Persistencia de la **consulta activa**  
 
 ---
 
@@ -130,19 +133,19 @@ Incluye:
 
 Pantalla con listado detallado:
 
-- Mascota
-- Dueño
-- Veterinario
-- Motivo
-- Fecha y hora
-- Costo final
-- Estado
+- Mascota  
+- Dueño  
+- Veterinario  
+- Motivo  
+- Fecha y hora  
+- Costo final  
+- Estado  
 
 Incluye:
 
-- Tarjetas Material 3
-- **Botones de editar y eliminar** (CRUD completo)
-- **Opciones de compartir consulta** mediante Intent implícito
+- Tarjetas Material 3  
+- **Botones de editar y eliminar** (CRUD completo)  
+- **Compartir consulta** mediante Intent implícito  
 
 ---
 
@@ -150,11 +153,11 @@ Incluye:
 
 Incluye:
 
-- Animación de entrada
-- Resumen dinámico
-- Menú superior con navegación
-- Acciones rápidas
-- Estadísticas básicas
+- Animación de entrada  
+- Resumen dinámico  
+- Menú superior y lateral  
+- Acciones rápidas  
+- Acceso a la **consulta activa** mediante diálogo modal  
 
 ---
 
@@ -172,8 +175,8 @@ Servicio encargado de programar recordatorios y notificaciones automáticas.
 
 Exposición de datos de:
 
-- Mascotas
-- Consultas
+- Mascotas  
+- Consultas  
 
 Permitendo el acceso desde aplicaciones externas.
 
@@ -181,30 +184,21 @@ Permitendo el acceso desde aplicaciones externas.
 
 Receiver registrado programáticamente que detecta:
 
-- Cambios en el estado del Wi-Fi
-- Eventos relevantes del sistema
-
-Muestra mensajes o ejecuta lógica según corresponda.
-
-### ✔ Intents implícitos
-
-Incluye:
-
-- `ShareReceiverActivity` para recibir texto de otras apps
-- Intent Filter configurado para `ACTION_SEND`
+- Cambios en el estado del Wi-Fi  
+- Eventos relevantes del sistema  
 
 ---
 
 ## ▶ Ejecución
 
-1. Clonar el proyecto
-2. Abrir en **Android Studio**
-3. Ejecutar en emulador o dispositivo físico
+1. Clonar el proyecto  
+2. Abrir en **Android Studio**  
+3. Ejecutar en emulador o dispositivo físico  
 
 ---
 
 ## 📱 Requisitos
 
-- Android Studio Iguana o superior
-- Kotlin 1.9+
-- Min SDK 24
+- Android Studio Iguana o superior  
+- Kotlin 1.9+  
+- Min SDK 24  

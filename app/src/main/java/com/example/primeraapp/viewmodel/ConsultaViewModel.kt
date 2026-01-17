@@ -13,6 +13,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import com.example.data.local.ConsultaActiva
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -22,6 +26,8 @@ class ConsultaViewModel(
 
     private val _uiState = MutableStateFlow(ConsultaUiState())
     val uiState: StateFlow<ConsultaUiState> = _uiState.asStateFlow()
+    var consultaActiva by mutableStateOf<ConsultaActiva?>(null)
+        private set
 
     init {
         observeConsultas()
@@ -39,6 +45,14 @@ class ConsultaViewModel(
                 }
             }
         }
+    }
+
+    fun mostrarConsultaActiva(consulta: ConsultaActiva) {
+        consultaActiva = consulta
+    }
+
+    fun limpiarConsultaActiva() {
+        consultaActiva = null
     }
 
     fun agregarConsulta(consulta: Consulta) {

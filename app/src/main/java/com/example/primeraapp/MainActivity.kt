@@ -10,7 +10,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.example.data.DataModule
 import com.example.primeraapp.auth.AuthManager
@@ -18,6 +17,10 @@ import com.example.primeraapp.receivers.WifiStateReceiver
 import com.example.primeraapp.ui.screens.LoginScreen
 import com.example.primeraapp.ui.screens.RegisterScreen
 import com.example.primeraapp.viewmodel.*
+import com.example.data.local.LocalStorageManager
+import com.example.primeraapp.ui.components.ConsultaActivaView
+import com.example.data.local.ConsultaActiva
+
 
 class MainActivity : ComponentActivity() {
 
