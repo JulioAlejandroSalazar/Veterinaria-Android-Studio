@@ -5,6 +5,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.background
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
@@ -23,6 +24,10 @@ import com.example.primeraapp.ui.navigation.AppScreen
 import com.example.primeraapp.viewmodel.AuthViewModel
 import com.example.primeraapp.viewmodel.ConsultaViewModel
 import com.example.primeraapp.viewmodel.MascotaViewModel
+import com.airbnb.lottie.compose.*
+import com.example.primeraapp.ui.components.BaseScreen
+import com.example.primeraapp.ui.theme.AppBackground
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,7 +54,6 @@ fun HomeScreen(
         }
     }
 
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -75,7 +79,6 @@ fun HomeScreen(
                         expanded = menuExpanded,
                         onDismissRequest = { menuExpanded = false }
                     ) {
-
                         DropdownMenuItem(
                             text = { Text("Registrar Mascota") },
                             onClick = {
@@ -132,120 +135,142 @@ fun HomeScreen(
         }
     ) { innerPadding ->
 
-        AnimatedVisibility(
-            visible = isVisible,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            LazyColumn(
+        BaseScreen {
+
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
 
-                item {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.semantics {
-                            contentDescription = "Pantalla principal de la aplicación veterinaria"
-                        }
+                AnimatedVisibility(
+                    visible = isVisible,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(20.dp)
                     ) {
-                        Text(
-                            text = "Bienvenido",
-                            style = MaterialTheme.typography.headlineMedium
-                        )
-                        Text(
-                            text = "Gestión de tu veterinaria",
-                            style = MaterialTheme.typography.bodyLarge
-                        )
+
+                        /*                    item {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.semantics {
+                                    contentDescription =
+                                        "Pantalla principal de la aplicación veterinaria"
+                                }
+                            ) {
+                                Text(
+                                    text = "Bienvenido",
+                                    style = MaterialTheme.typography.headlineMedium
+                                )
+                                Text(
+                                    text = "Gestión de tu veterinaria",
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                            }
+                        }*/
+
+                        item {
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+                                elevation = CardDefaults.cardElevation(4.dp)
+                            ) {
+                                Column(
+                                    modifier = Modifier.padding(16.dp),
+                                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                                ) {
+                                    Text("Mascotas", style = MaterialTheme.typography.titleLarge)
+                                    Text("Registra y administra las mascotas de tus clientes")
+
+                                    Button(
+                                        onClick = {
+                                            navController.navigate(
+                                                AppScreen.RegistrarMascota.createRoute(-1)
+                                            )
+                                        },
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Text("Registrar Mascota")
+                                    }
+
+                                    OutlinedButton(
+                                        onClick = {
+                                            navController.navigate(AppScreen.VerMascotas.route)
+                                        },
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Text("Ver Mascotas")
+                                    }
+                                }
+                            }
+                        }
+
+                        item {
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+                                elevation = CardDefaults.cardElevation(4.dp)
+                            ) {
+                                Column(
+                                    modifier = Modifier.padding(16.dp),
+                                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                                ) {
+                                    Text("Consultas", style = MaterialTheme.typography.titleLarge)
+                                    Text("Control y seguimiento de consultas médicas")
+
+                                    Button(
+                                        onClick = {
+                                            navController.navigate(
+                                                AppScreen.RegistrarConsulta.createRoute(-1)
+                                            )
+                                        },
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Text("Registrar Consulta")
+                                    }
+
+                                    OutlinedButton(
+                                        onClick = {
+                                            navController.navigate(AppScreen.VerConsultas.route)
+                                        },
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Text("Ver Consultas")
+                                    }
+                                }
+                            }
+                        }
+
+                        item { Spacer(modifier = Modifier.height(160.dp)) }
                     }
                 }
 
-                item {
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        elevation = CardDefaults.cardElevation(4.dp)
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            Text("Mascotas", style = MaterialTheme.typography.titleLarge)
-                            Text("Registra y administra las mascotas de tus clientes")
+                val composition by rememberLottieComposition(
+                    LottieCompositionSpec.Asset("Cat_Movement.json")
+                )
 
-                            Button(
-                                onClick = {
-                                    navController.navigate(
-                                        AppScreen.RegistrarMascota.createRoute(-1)
-                                    )
-                                },
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text("Registrar Mascota")
-                            }
-
-                            OutlinedButton(
-                                onClick = {
-                                    navController.navigate(AppScreen.VerMascotas.route)
-                                },
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text("Ver Mascotas")
-                            }
-                        }
-                    }
-                }
-
-                item {
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        elevation = CardDefaults.cardElevation(4.dp)
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            Text("Consultas", style = MaterialTheme.typography.titleLarge)
-                            Text("Control y seguimiento de consultas médicas")
-
-                            Button(
-                                onClick = {
-                                    navController.navigate(
-                                        AppScreen.RegistrarConsulta.createRoute(-1)
-                                    )
-                                },
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text("Registrar Consulta")
-                            }
-
-                            OutlinedButton(
-                                onClick = {
-                                    navController.navigate(AppScreen.VerConsultas.route)
-                                },
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text("Ver Consultas")
-                            }
-                        }
-                    }
-                }
+                LottieAnimation(
+                    composition = composition,
+                    iterations = LottieConstants.IterateForever,
+                    modifier = Modifier
+                        .height(140.dp)
+                        .align(Alignment.BottomCenter)
+                )
             }
         }
     }
 
     if (mostrarConsultaActivaDialog) {
         Dialog(onDismissRequest = { mostrarConsultaActivaDialog = false }) {
-
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(24.dp),
                 contentAlignment = Alignment.Center
             ) {
-
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     elevation = CardDefaults.cardElevation(8.dp)
@@ -254,7 +279,6 @@ fun HomeScreen(
                         modifier = Modifier.padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-
                         Text(
                             text = "Consulta activa",
                             style = MaterialTheme.typography.titleLarge

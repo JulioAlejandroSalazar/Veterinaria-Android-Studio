@@ -22,6 +22,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.primeraapp.ui.components.BaseScreen
 import com.example.primeraapp.ui.components.BotonVolverHome
 import com.example.primeraapp.ui.navigation.AppScreen
 import com.example.primeraapp.viewmodel.ConsultaViewModel
@@ -39,73 +40,73 @@ fun VerMascotasScreen(
     Scaffold(
         topBar = { TopAppBar(title = { Text("Mascotas Registradas") }) }
     ) { innerPadding ->
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(16.dp)
-        ) {
-
-            LazyColumn(
-                modifier = Modifier.weight(1f)
+        BaseScreen {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .padding(16.dp)
             ) {
-                items(mascotas) { mascota ->
 
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 6.dp)
-                    ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
+                LazyColumn(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    items(mascotas) { mascota ->
 
-                            Text("Nombre: ${mascota.nombre}")
-                            Text("Especie: ${mascota.especie}")
-                            Text("Dueño: ${mascota.dueno.nombre}")
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 6.dp)
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp)) {
 
-                            Spacer(modifier = Modifier.height(8.dp))
+                                Text("Nombre: ${mascota.nombre}")
+                                Text("Especie: ${mascota.especie}")
+                                Text("Dueño: ${mascota.dueno.nombre}")
 
-                            Row(
-                                horizontalArrangement = Arrangement.End,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
+                                Spacer(modifier = Modifier.height(8.dp))
 
-                                TextButton(
-                                    onClick = {
-                                        navController.navigate(
-                                            AppScreen.RegistrarMascota.createRoute(mascota.id)
+                                Row(
+                                    horizontalArrangement = Arrangement.End,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+
+                                    TextButton(
+                                        onClick = {
+                                            navController.navigate(
+                                                AppScreen.RegistrarMascota.createRoute(mascota.id)
+                                            )
+                                        }
+                                    ) {
+                                        Text("Editar")
+                                    }
+
+                                    TextButton(
+                                        onClick = {
+                                            mascotaViewModel.eliminarMascota(
+                                                mascota.id
+                                            )
+
+                                            consultaViewModel.eliminarConsultasDeMascota(
+                                                mascota.id
+                                            )
+                                        }
+                                    ) {
+                                        Text(
+                                            "Eliminar",
+                                            color = MaterialTheme.colorScheme.error
                                         )
                                     }
-                                ) {
-                                    Text("Editar")
-                                }
-
-                                TextButton(
-                                    onClick = {
-                                        mascotaViewModel.eliminarMascota(
-                                            mascota.id
-                                        )
-
-                                        consultaViewModel.eliminarConsultasDeMascota(
-                                            mascota.id
-                                        )
-                                    }
-                                ) {
-                                    Text(
-                                        "Eliminar",
-                                        color = MaterialTheme.colorScheme.error
-                                    )
                                 }
                             }
                         }
                     }
                 }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                BotonVolverHome(navController)
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            BotonVolverHome(navController)
         }
     }
-
 }

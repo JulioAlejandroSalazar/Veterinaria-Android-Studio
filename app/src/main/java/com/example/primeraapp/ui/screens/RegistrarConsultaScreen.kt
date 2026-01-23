@@ -16,9 +16,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.data.DataModule
 import com.example.domain.model.Consulta
+import com.example.primeraapp.ui.components.BaseScreen
 import com.example.primeraapp.ui.components.BotonVolverHome
+import com.example.primeraapp.ui.components.DropdownMenuSelector
 import com.example.primeraapp.ui.components.ProgressOverlay
 import com.example.primeraapp.ui.navigation.AppScreen
+import com.example.primeraapp.ui.theme.darkOutlinedTextFieldColors
 import com.example.primeraapp.viewmodel.ConsultaViewModel
 import com.example.primeraapp.viewmodel.MascotaViewModel
 import kotlinx.coroutines.launch
@@ -36,6 +39,8 @@ fun RegistrarConsultaScreen(
     val mascotas = mascotaViewModel.uiState.collectAsState().value.mascotas
     val veterinarios = DataModule.veterinarios
     val scope = rememberCoroutineScope()
+
+    val esEdicion = consultaId != null
 
     var seleccionadoMascotaIndex by remember { mutableStateOf(0) }
     var seleccionadoVetIndex by remember { mutableStateOf(0) }
@@ -74,175 +79,151 @@ fun RegistrarConsultaScreen(
     }
 
     if (mascotas.isEmpty()) {
-        Column(Modifier.fillMaxSize().padding(16.dp)) {
-            Text("No hay mascotas registradas", color = Color.Red)
-            Spacer(Modifier.weight(1f))
-            BotonVolverHome(navController)
+        BaseScreen {
+            Column(Modifier.fillMaxSize().padding(16.dp)) {
+                Text("No hay mascotas registradas", color = Color.Red)
+                Spacer(Modifier.weight(1f))
+                BotonVolverHome(navController)
+            }
         }
         return
     }
 
-    Box(Modifier.fillMaxSize()) {
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-
-            Text(
-                if (isEditing) "Editar consulta" else "Registrar consulta",
-                style = MaterialTheme.typography.headlineSmall
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(if (esEdicion) "Editar Consulta" else "Registrar Consulta")
+                }
             )
+        }
+    ) { innerPadding ->
+        BaseScreen {
+            Box(Modifier.fillMaxSize()) {
 
-            Text("Mascota")
-            DropdownMenuSelector(
-                items = mascotas.map { it.nombre },
-                selectedIndex = seleccionadoMascotaIndex,
-                onSelect = { seleccionadoMascotaIndex = it }
-            )
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
 
-            Text("Veterinario")
-            DropdownMenuSelector(
-                items = veterinarios.map { it.nombre },
-                selectedIndex = seleccionadoVetIndex,
-                onSelect = { seleccionadoVetIndex = it }
-            )
-
-            Text("Motivo / Tipo de consulta")
-
-            val tiposConsulta = listOf(
-                "Se siente mal",
-                "Vomita",
-                "Se lesionó"
-            )
-
-            DropdownMenuSelector(
-                items = tiposConsulta,
-                selectedIndex = tiposConsulta.indexOf(motivo).coerceAtLeast(0),
-                onSelect = { motivo = tiposConsulta[it] }
-            )
-
-
-            OutlinedTextField(
-                value = fechaTexto,
-                onValueChange = { fechaTexto = it },
-                label = { Text("Fecha (YYYY-MM-DD)") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            OutlinedTextField(
-                value = horaTexto,
-                onValueChange = { horaTexto = it },
-                label = { Text("Hora (HH:mm)") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            OutlinedTextField(
-                value = costoBase,
-                onValueChange = { costoBase = it },
-                label = { Text("Costo base") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(Modifier.weight(1f))
-
-            Button(
-                onClick = {
-                    val mascota = mascotas[seleccionadoMascotaIndex]
-                    val veterinario = veterinarios[seleccionadoVetIndex]
-
-                    val consulta = Consulta(
-                        id = consultaId ?: System.currentTimeMillis(),
-                        mascota = mascota,
-                        veterinario = veterinario,
-                        fecha = LocalDate.parse(fechaTexto),
-                        hora = LocalTime.parse(horaTexto),
-                        motivo = motivo,
-                        costoBase = costoBase.toDouble()
+                    Text(
+                        if (isEditing) "Editar consulta" else "Registrar consulta",
+                        style = MaterialTheme.typography.headlineSmall
                     )
 
-                    isLoading = true
-                    scope.launch {
-                        if (isEditing) {
-                            consultaViewModel.actualizarConsulta(consulta)
-                        } else {
-                            consultaViewModel.agregarConsulta(consulta)
-                        }
+                    Text("Mascota",
+                        color = Color.White)
+                    DropdownMenuSelector(
+                        items = mascotas.map { it.nombre },
+                        selectedIndex = seleccionadoMascotaIndex,
+                        onSelect = { seleccionadoMascotaIndex = it }
+                    )
 
-                        localStorage.guardarConsultaActiva(
-                            mascotaNombre = mascota.nombre,
-                            mascotaEspecie = mascota.especie,
-                            mascotaEdad = mascota.edad,
-                            duenoNombre = mascota.dueno.nombre,
-                            motivoConsulta = consulta.motivo
-                        )
+                    Text("Veterinario",
+                        color = Color.White)
+                    DropdownMenuSelector(
+                        items = veterinarios.map { it.nombre },
+                        selectedIndex = seleccionadoVetIndex,
+                        onSelect = { seleccionadoVetIndex = it }
+                    )
 
-                        isLoading = false
-                        navController.navigate(AppScreen.Home.route)
+                    Text("Motivo / Tipo de consulta",
+                        color = Color.White)
+                    val tiposConsulta = listOf(
+                        "Se siente mal",
+                        "Vomita",
+                        "Se lesionó"
+                    )
+
+                    DropdownMenuSelector(
+                        items = tiposConsulta,
+                        selectedIndex = tiposConsulta.indexOf(motivo).coerceAtLeast(0),
+                        onSelect = { motivo = tiposConsulta[it] }
+                    )
+
+
+                    OutlinedTextField(
+                        value = fechaTexto,
+                        onValueChange = { fechaTexto = it },
+                        label = { Text("Fecha (YYYY-MM-DD)") },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = darkOutlinedTextFieldColors()
+                    )
+
+                    OutlinedTextField(
+                        value = horaTexto,
+                        onValueChange = { horaTexto = it },
+                        label = { Text("Hora (HH:mm)") },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = darkOutlinedTextFieldColors()
+                    )
+
+                    OutlinedTextField(
+                        value = costoBase,
+                        onValueChange = { costoBase = it },
+                        label = { Text("Costo base") },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = darkOutlinedTextFieldColors()
+                    )
+
+                    Spacer(Modifier.weight(1f))
+
+                    Button(
+                        onClick = {
+                            val mascota = mascotas[seleccionadoMascotaIndex]
+                            val veterinario = veterinarios[seleccionadoVetIndex]
+
+                            val consulta = Consulta(
+                                id = consultaId ?: System.currentTimeMillis(),
+                                mascota = mascota,
+                                veterinario = veterinario,
+                                fecha = LocalDate.parse(fechaTexto),
+                                hora = LocalTime.parse(horaTexto),
+                                motivo = motivo,
+                                costoBase = costoBase.toDoubleOrNull() ?: 0.0
+                            )
+
+                            isLoading = true
+                            scope.launch {
+                                if (isEditing) {
+                                    consultaViewModel.actualizarConsulta(consulta)
+                                } else {
+                                    consultaViewModel.agregarConsulta(consulta)
+                                }
+
+                                localStorage.guardarConsultaActiva(
+                                    mascotaNombre = mascota.nombre,
+                                    mascotaEspecie = mascota.especie,
+                                    mascotaEdad = mascota.edad,
+                                    duenoNombre = mascota.dueno.nombre,
+                                    motivoConsulta = consulta.motivo
+                                )
+
+                                isLoading = false
+                                navController.navigate(AppScreen.Home.route)
+                            }
+
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(if (isEditing) "Actualizar" else "Registrar")
                     }
 
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(if (isEditing) "Actualizar" else "Registrar")
-            }
+                    BotonVolverHome(navController)
+                }
 
-            BotonVolverHome(navController)
-        }
-
-        ProgressOverlay(
-            isLoading = isLoading,
-            message = if (isEditing) "Actualizando consulta..." else "Registrando consulta..."
-        )
-    }
-}
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DropdownMenuSelector(
-    items: List<String>,
-    selectedIndex: Int,
-    onSelect: (Int) -> Unit
-) {
-    var expanded by remember { mutableStateOf(false) }
-    val selectedText = if (items.isNotEmpty()) items[selectedIndex] else "n/a"
-
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { expanded = !expanded }
-    ) {
-
-        OutlinedTextField(
-            value = selectedText,
-            onValueChange = {},
-            readOnly = true,
-            label = { Text("Seleccionar") },
-            trailingIcon = {
-                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .menuAnchor()
-        )
-
-        ExposedDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            items.forEachIndexed { index, item ->
-                DropdownMenuItem(
-                    text = { Text(item) },
-                    onClick = {
-                        onSelect(index)
-                        expanded = false
-                    }
+                ProgressOverlay(
+                    isLoading = isLoading,
+                    message = if (isEditing) "Actualizando consulta..." else "Registrando consulta..."
                 )
             }
         }
     }
 }
+
+
+
 

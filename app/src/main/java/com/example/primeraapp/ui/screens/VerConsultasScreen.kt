@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.primeraapp.ui.components.BaseScreen
 import com.example.primeraapp.ui.components.BotonVolverHome
 import com.example.primeraapp.ui.components.ProgressOverlay
 import com.example.primeraapp.ui.navigation.AppScreen
@@ -39,82 +40,83 @@ fun VerConsultasScreen(
     Scaffold(
         topBar = { TopAppBar(title = { Text("Consultas Registradas") }) }
     ) { innerPadding ->
+        BaseScreen {
+            Box(Modifier.fillMaxSize()) {
 
-        Box(Modifier.fillMaxSize()) {
-
-            AnimatedVisibility(
-                visible = isVisible,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding)
-                        .padding(16.dp)
+                AnimatedVisibility(
+                    visible = isVisible,
+                    enter = fadeIn(),
+                    exit = fadeOut()
                 ) {
 
-                    LazyColumn {
-                        items(consultas) { consulta ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding)
+                            .padding(16.dp)
+                    ) {
 
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 6.dp)
-                            ) {
-                                Column(modifier = Modifier.padding(16.dp)) {
-                                    Text("Mascota: ${consulta.mascota.nombre}")
-                                    Text("Dueño: ${consulta.mascota.dueno.nombre}")
-                                    Text("Veterinario: ${consulta.veterinario.nombre}")
-                                    Text("Motivo: ${consulta.motivo}")
-                                    Text("Fecha: ${consulta.fecha}")
-                                    Text("Hora: ${consulta.hora}")
-                                    Text("Costo final: ${consulta.calcularCostoFinal()}")
-                                    Text("Estado: ${consulta.estado}")
+                        LazyColumn {
+                            items(consultas) { consulta ->
 
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.End
-                                    ) {
+                                Card(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 6.dp)
+                                ) {
+                                    Column(modifier = Modifier.padding(16.dp)) {
+                                        Text("Mascota: ${consulta.mascota.nombre}")
+                                        Text("Dueño: ${consulta.mascota.dueno.nombre}")
+                                        Text("Veterinario: ${consulta.veterinario.nombre}")
+                                        Text("Motivo: ${consulta.motivo}")
+                                        Text("Fecha: ${consulta.fecha}")
+                                        Text("Hora: ${consulta.hora}")
+                                        Text("Costo final: ${consulta.calcularCostoFinal()}")
+                                        Text("Estado: ${consulta.estado}")
+
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.End
+                                        ) {
+                                            TextButton(
+                                                onClick = {
+                                                    consultaViewModel.eliminarConsulta(
+                                                        consulta.id
+                                                    )
+                                                }
+                                            ) {
+                                                Text("Eliminar", color = MaterialTheme.colorScheme.error)
+                                            }
+                                        }
+
                                         TextButton(
                                             onClick = {
-                                                consultaViewModel.eliminarConsulta(
-                                                    consulta.id
+                                                navController.navigate(
+                                                    AppScreen.RegistrarConsulta.createRoute(consulta.id)
                                                 )
                                             }
                                         ) {
-                                            Text("Eliminar", color = MaterialTheme.colorScheme.error)
+                                            Text("Editar")
                                         }
+
+
+
                                     }
-
-                                    TextButton(
-                                        onClick = {
-                                            navController.navigate(
-                                                AppScreen.RegistrarConsulta.createRoute(consulta.id)
-                                            )
-                                        }
-                                    ) {
-                                        Text("Editar")
-                                    }
-
-
-
                                 }
                             }
                         }
+
+                        Spacer(modifier = Modifier.weight(1f))
+                        BotonVolverHome(navController)
+
                     }
-
-                    Spacer(modifier = Modifier.weight(1f))
-                    BotonVolverHome(navController)
-
                 }
-            }
 
-            ProgressOverlay(
-                isLoading = isLoading,
-                message = "Cargando consultas..."
-            )
+                ProgressOverlay(
+                    isLoading = isLoading,
+                    message = "Cargando consultas..."
+                )
+            }
         }
     }
 }

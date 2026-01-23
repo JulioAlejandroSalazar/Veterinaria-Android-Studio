@@ -1,5 +1,6 @@
 package com.example.primeraapp.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -8,7 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.airbnb.lottie.compose.*
 import com.example.domain.model.Usuario
+import com.example.primeraapp.ui.components.BaseScreen
+import com.example.primeraapp.ui.theme.AppBackground
 import com.example.primeraapp.viewmodel.AuthViewModel
 
 @Composable
@@ -25,88 +29,134 @@ fun RegisterScreen(
     var error by remember { mutableStateOf<String?>(null) }
     var success by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center
-    ) {
 
-        Text(
-            text = "Registro de usuario",
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-
-        TextField(value = nombre, onValueChange = { nombre = it }, label = { Text("Nombre") })
-        TextField(value = telefono, onValueChange = { telefono = it }, label = { Text("Teléfono") })
-        TextField(value = correo, onValueChange = { correo = it }, label = { Text("Correo") })
-
-        TextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Contraseña") },
-            visualTransformation = PasswordVisualTransformation()
-        )
-
-        Button(
+    BaseScreen {
+        Box(
             modifier = Modifier
-                .padding(top = 16.dp)
-                .fillMaxWidth(),
-            onClick = {
-                if (nombre.isBlank() || telefono.isBlank() ||
-                    correo.isBlank() || password.isBlank()
-                ) {
-                    error = "Completa todos los campos"
-                    return@Button
-                }
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
 
-                val usuario = Usuario(
-                    nombre = nombre,
-                    telefono = telefono,
-                    correo = correo,
-                    password = password
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.Center),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
+                Text(
+                    text = "Registro de usuario",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = Color.White,
+                    modifier = Modifier.padding(bottom = 16.dp)
                 )
 
-                val ok = viewModel.register(usuario)
+                TextField(
+                    value = nombre,
+                    onValueChange = { nombre = it },
+                    label = { Text("Nombre") },
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-                if (ok) {
-                    success = true
-                    error = null
-                } else {
-                    error = "Ya existe un usuario registrado"
+                Spacer(modifier = Modifier.height(8.dp))
+
+                TextField(
+                    value = telefono,
+                    onValueChange = { telefono = it },
+                    label = { Text("Teléfono") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                TextField(
+                    value = correo,
+                    onValueChange = { correo = it },
+                    label = { Text("Correo") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                TextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    label = { Text("Contraseña") },
+                    visualTransformation = PasswordVisualTransformation(),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                val composition by rememberLottieComposition(
+                    LottieCompositionSpec.Asset("Loader_cat.json")
+                )
+
+                LottieAnimation(
+                    composition = composition,
+                    iterations = LottieConstants.IterateForever,
+                    modifier = Modifier.height(150.dp)
+                )
+
+                if (error != null) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(text = error!!, color = Color.Red)
                 }
 
+                if (success) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Registro exitoso",
+                        color = Color(0xFF2E7D32)
+                    )
+
+                    LaunchedEffect(Unit) {
+                        onRegisterSuccess()
+                    }
+                }
             }
-        ) {
-            Text("Registrarse")
-        }
 
-        if (error != null) {
-            Text(
-                text = error!!,
-                color = Color.Red,
-                modifier = Modifier.padding(top = 8.dp)
-            )
-        }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
 
-        if (success) {
-            Text(
-                text = "Registro exitoso",
-                color = Color(0xFF2E7D32),
-                modifier = Modifier.padding(top = 8.dp)
-            )
+                Button(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {
+                        if (nombre.isBlank() || telefono.isBlank() ||
+                            correo.isBlank() || password.isBlank()
+                        ) {
+                            error = "Completa todos los campos"
+                            return@Button
+                        }
 
-            LaunchedEffect(Unit) {
-                onRegisterSuccess()
+                        val usuario = Usuario(
+                            nombre = nombre,
+                            telefono = telefono,
+                            correo = correo,
+                            password = password
+                        )
+
+                        val ok = viewModel.register(usuario)
+
+                        if (ok) {
+                            success = true
+                            error = null
+                        } else {
+                            error = "Ya existe un usuario registrado"
+                        }
+                    }
+                ) {
+                    Text("Registrarse")
+                }
+
+                TextButton(onClick = onBackToLogin) {
+                    Text("Volver al login", color = Color.White)
+                }
             }
-        }
-
-        TextButton(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            onClick = onBackToLogin
-        ) {
-            Text("Volver al login")
         }
     }
 }
