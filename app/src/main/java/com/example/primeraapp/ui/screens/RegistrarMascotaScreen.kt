@@ -21,6 +21,9 @@ import com.example.primeraapp.ui.theme.darkOutlinedTextFieldColors
 import com.example.primeraapp.viewmodel.MascotaViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -213,8 +216,9 @@ fun RegistrarMascotaScreen(
 
                                     if (!valido) return@Button
 
-                                    isLoading = true
                                     scope.launch {
+                                        isLoading = true
+
                                         val mascota = Mascota(
                                             id = mascotaId ?: System.currentTimeMillis(),
                                             nombre = nombre,
@@ -229,15 +233,18 @@ fun RegistrarMascotaScreen(
                                             fechaUltimaVacuna = fechaParsed!!
                                         )
 
-                                        if (esEdicion) {
-                                            mascotaViewModel.actualizarMascota(mascota)
-                                        } else {
-                                            mascotaViewModel.agregarMascota(mascota)
+                                        withContext(Dispatchers.IO) {
+                                            if (esEdicion) {
+                                                mascotaViewModel.actualizarMascota(mascota)
+                                            } else {
+                                                mascotaViewModel.agregarMascota(mascota)
+                                            }
                                         }
 
                                         isLoading = false
                                         navController.navigate(AppScreen.Home.route)
                                     }
+
                                 },
                                 modifier = Modifier.fillMaxWidth()
                             ) {

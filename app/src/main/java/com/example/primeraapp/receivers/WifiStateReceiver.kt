@@ -7,6 +7,7 @@ import android.net.wifi.WifiManager
 import android.util.Log
 import android.widget.Toast
 
+/*
 class WifiStateReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent?) {
@@ -30,3 +31,4 @@ class WifiStateReceiver : BroadcastReceiver() {
         }
     }
 }
+*/

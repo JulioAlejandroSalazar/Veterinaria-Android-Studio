@@ -13,7 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import com.example.data.DataModule
 import com.example.primeraapp.auth.AuthManager
-import com.example.primeraapp.receivers.WifiStateReceiver
+// import com.example.primeraapp.receivers.WifiStateReceiver
 import com.example.primeraapp.ui.screens.LoginScreen
 import com.example.primeraapp.ui.screens.RegisterScreen
 import com.example.primeraapp.viewmodel.*
@@ -32,7 +32,8 @@ class MainActivity : ComponentActivity() {
         ConsultaViewModelFactory(DataModule.consultaRepository)
     }
 
-    private val wifiReceiver = WifiStateReceiver()
+    // Solo para ver mensaje en Logcat al activar/desactivar wifi
+    /*private val wifiReceiver = WifiStateReceiver()
 
     override fun onResume() {
         super.onResume()
@@ -45,7 +46,7 @@ class MainActivity : ComponentActivity() {
     override fun onPause() {
         super.onPause()
         unregisterReceiver(wifiReceiver)
-    }
+    }*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

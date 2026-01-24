@@ -24,7 +24,9 @@ import com.example.primeraapp.ui.navigation.AppScreen
 import com.example.primeraapp.ui.theme.darkOutlinedTextFieldColors
 import com.example.primeraapp.viewmodel.ConsultaViewModel
 import com.example.primeraapp.viewmodel.MascotaViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -99,7 +101,11 @@ fun RegistrarConsultaScreen(
         }
     ) { innerPadding ->
         BaseScreen {
-            Box(Modifier.fillMaxSize()) {
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
 
                 Column(
                     modifier = Modifier
@@ -186,25 +192,28 @@ fun RegistrarConsultaScreen(
                                 costoBase = costoBase.toDoubleOrNull() ?: 0.0
                             )
 
-                            isLoading = true
                             scope.launch {
-                                if (isEditing) {
-                                    consultaViewModel.actualizarConsulta(consulta)
-                                } else {
-                                    consultaViewModel.agregarConsulta(consulta)
-                                }
+                                isLoading = true
+                                withContext(Dispatchers.IO) {
+                                    if (isEditing) {
+                                        consultaViewModel.actualizarConsulta(consulta)
+                                    } else {
+                                        consultaViewModel.agregarConsulta(consulta)
+                                    }
 
-                                localStorage.guardarConsultaActiva(
-                                    mascotaNombre = mascota.nombre,
-                                    mascotaEspecie = mascota.especie,
-                                    mascotaEdad = mascota.edad,
-                                    duenoNombre = mascota.dueno.nombre,
-                                    motivoConsulta = consulta.motivo
-                                )
+                                    localStorage.guardarConsultaActiva(
+                                        mascotaNombre = mascota.nombre,
+                                        mascotaEspecie = mascota.especie,
+                                        mascotaEdad = mascota.edad,
+                                        duenoNombre = mascota.dueno.nombre,
+                                        motivoConsulta = consulta.motivo
+                                    )
+                                }
 
                                 isLoading = false
                                 navController.navigate(AppScreen.Home.route)
                             }
+
 
                         },
                         modifier = Modifier.fillMaxWidth()

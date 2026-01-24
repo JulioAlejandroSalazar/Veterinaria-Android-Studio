@@ -2,7 +2,7 @@
 
 Aplicación móvil desarrollada con **Jetpack Compose** para gestionar una veterinaria de manera simple y organizada. La app incluye **sistema de autenticación**, **CRUD completo**, registro de mascotas y consultas, navegación avanzada y el uso de componentes fundamentales de Android como Services, Content Providers, BroadcastReceivers e Intents.
 
-Además, incorpora **persistencia local de datos** para el manejo de una **consulta activa**, accesible desde la pantalla principal incluso sin conexión a internet.
+Además, incorpora **persistencia local de datos** para el manejo de una **consulta activa**, accesible desde la pantalla principal incluso sin conexión a internet, junto con **programación asincrónica mediante Coroutines** y **animaciones modernas utilizando LottieFiles** para mejorar la experiencia de usuario.
 
 ---
 
@@ -17,17 +17,19 @@ Además, incorpora **persistencia local de datos** para el manejo de una **consu
   - Gestión completa de mascotas
   - Gestión completa de consultas
 
-- Registrar mascotas con validaciones completas  
-- Registrar consultas solo si existe una mascota registrada  
-- Validación de fechas, campos obligatorios y formatos  
-- Lista completa y organizada de consultas registradas  
-- Cálculo automático del costo final de la consulta  
+- Registrar mascotas con validaciones completas
+- Registrar consultas solo si existe una mascota registrada
+- Validación de fechas, campos obligatorios y formatos
+- Lista completa y organizada de consultas registradas
+- Cálculo automático del costo final de la consulta
 
 - Pantalla de inicio con **ResumenUI** (mascotas, consultas, último dueño)
 
-- Animaciones con `AnimatedVisibility`, `fadeIn`, `fadeOut`
+- **Animaciones UI**
+  - Animaciones con `AnimatedVisibility`, `fadeIn`, `fadeOut`
+  - Animaciones vectoriales usando **LottieFiles** para estados visuales y feedback al usuario
 
-- Menú superior con navegación entre pantallas  
+- Menú superior con navegación entre pantallas
 - Menú lateral tipo hamburguesa con acciones adicionales
 
 - **Visualización de consulta activa**
@@ -40,6 +42,11 @@ Además, incorpora **persistencia local de datos** para el manejo de una **consu
 - **Navegación Compose** con `NavHostController`
 
 - Arquitectura basada en **Model – ViewModel – UI**
+
+- **Uso de Coroutines**
+  - Operaciones de registro y edición ejecutadas de forma asincrónica
+  - Manejo de estados de carga (`isLoading`)
+  - Uso de `Dispatchers.IO` para operaciones fuera del hilo principal
 
 - **Botones de editar y eliminar** en listas
 
@@ -62,6 +69,8 @@ Además, incorpora **persistencia local de datos** para el manejo de una **consu
 - **Material 3**
 - **Navigation Compose**
 - **ViewModel + State Hoisting**
+- **Kotlin Coroutines**
+- **LottieFiles**
 - **SharedPreferences**
 - **Java Time API** (`LocalDate`, `LocalTime`)
 - **Services**
@@ -77,9 +86,9 @@ Además, incorpora **persistencia local de datos** para el manejo de una **consu
 
 La aplicación cuenta con un sistema de autenticación que permite:
 
-- Registro de nuevos usuarios  
-- Inicio de sesión con validaciones  
-- Protección del acceso a las funcionalidades principales  
+- Registro de nuevos usuarios
+- Inicio de sesión con validaciones
+- Protección del acceso a las funcionalidades principales
 
 ---
 
@@ -87,23 +96,23 @@ La aplicación cuenta con un sistema de autenticación que permite:
 
 **Campos solicitados:**
 
-- Nombre  
-- Especie  
-- Edad  
-- Nombre del dueño  
-- Teléfono  
-- Correo  
+- Nombre
+- Especie
+- Edad
+- Nombre del dueño
+- Teléfono
+- Correo
 - Fecha de última vacuna (AAAA-MM-DD)
 
 **Validaciones:**
 
-- Campos obligatorios  
-- Edad numérica  
-- Email válido  
-- Teléfono numérico  
-- Fecha válida  
+- Campos obligatorios
+- Edad numérica
+- Email válido
+- Teléfono numérico
+- Fecha válida
 
-Las mascotas se almacenan en el **ViewModel** mediante `mutableStateListOf`.
+Las operaciones de registro y edición se realizan de forma asincrónica utilizando **Coroutines**, evitando bloqueos en la interfaz y mejorando la fluidez de la aplicación.
 
 ---
 
@@ -113,19 +122,20 @@ Requiere al menos una mascota registrada.
 
 **Campos:**
 
-- Mascota seleccionada  
-- Veterinario  
-- Motivo  
-- Costo base  
-- Fecha (AAAA-MM-DD) — sin fechas pasadas  
+- Mascota seleccionada
+- Veterinario
+- Motivo
+- Costo base
+- Fecha (AAAA-MM-DD)
 - Hora (HH:mm)
 
 Incluye:
 
-- Validación completa  
-- Uso de `LocalDate` y `LocalTime`  
-- Cálculo automático del costo final  
-- Persistencia de la **consulta activa**  
+- Validación completa
+- Uso de `LocalDate` y `LocalTime`
+- Cálculo automático del costo final
+- Persistencia de la **consulta activa**
+- Ejecución asincrónica mediante **Coroutines** para mantener una interfaz responsiva
 
 ---
 
@@ -133,19 +143,19 @@ Incluye:
 
 Pantalla con listado detallado:
 
-- Mascota  
-- Dueño  
-- Veterinario  
-- Motivo  
-- Fecha y hora  
-- Costo final  
-- Estado  
+- Mascota
+- Dueño
+- Veterinario
+- Motivo
+- Fecha y hora
+- Costo final
+- Estado
 
 Incluye:
 
-- Tarjetas Material 3  
-- **Botones de editar y eliminar** (CRUD completo)  
-- **Compartir consulta** mediante Intent implícito  
+- Tarjetas Material 3
+- **Botones de editar y eliminar** (CRUD completo)
+- **Compartir consulta** mediante Intent implícito
 
 ---
 
@@ -153,11 +163,12 @@ Incluye:
 
 Incluye:
 
-- Animación de entrada  
-- Resumen dinámico  
-- Menú superior y lateral  
-- Acciones rápidas  
-- Acceso a la **consulta activa** mediante diálogo modal  
+- Animaciones de entrada
+- Resumen dinámico
+- Menú superior y lateral
+- Acciones rápidas
+- Acceso a la **consulta activa** mediante diálogo modal
+- Animaciones visuales utilizando **LottieFiles**
 
 ---
 
@@ -175,30 +186,30 @@ Servicio encargado de programar recordatorios y notificaciones automáticas.
 
 Exposición de datos de:
 
-- Mascotas  
-- Consultas  
+- Mascotas
+- Consultas
 
-Permitendo el acceso desde aplicaciones externas.
+Permitiendo el acceso desde aplicaciones externas.
 
 ### ✔ BroadcastReceiver dinámico
 
 Receiver registrado programáticamente que detecta:
 
-- Cambios en el estado del Wi-Fi  
-- Eventos relevantes del sistema  
+- Cambios en el estado del Wi-Fi
+- Eventos relevantes del sistema
 
 ---
 
 ## ▶ Ejecución
 
-1. Clonar el proyecto  
-2. Abrir en **Android Studio**  
-3. Ejecutar en emulador o dispositivo físico  
+1. Clonar el proyecto
+2. Abrir en **Android Studio**
+3. Ejecutar en emulador o dispositivo físico
 
 ---
 
 ## 📱 Requisitos
 
-- Android Studio Iguana o superior  
-- Kotlin 1.9+  
-- Min SDK 24  
+- Android Studio Iguana o superior
+- Kotlin 1.9+
+- Min SDK 24
