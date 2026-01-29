@@ -1,5 +1,6 @@
 package com.example.primeraapp.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -12,6 +13,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+private const val TAG = "MascotaViewModel"
+
 class MascotaViewModel(
     private val mascotaRepository: MascotaRepository
 ) : ViewModel() {
@@ -20,12 +23,15 @@ class MascotaViewModel(
     val uiState: StateFlow<MascotaUiState> = _uiState.asStateFlow()
 
     init {
+        Log.d(TAG, "Inicializando MascotaViewModel")
         observeMascotas()
     }
 
     private fun observeMascotas() {
         viewModelScope.launch {
+            Log.d(TAG, "Observando flujo de mascotas")
             mascotaRepository.getMascotasFlow().collect { list ->
+                Log.d(TAG, "Mascotas recibidas: ${list.size}")
                 _uiState.update {
                     it.copy(
                         mascotas = list,
@@ -40,8 +46,12 @@ class MascotaViewModel(
     fun agregarMascota(mascota: Mascota) {
         viewModelScope.launch {
             try {
+                Log.d(TAG, "Iniciando registro de mascota")
                 _uiState.update { it.copy(isLoading = true) }
+
                 mascotaRepository.add(mascota)
+
+                Log.i(TAG, "Mascota agregada correctamente")
                 _uiState.update {
                     it.copy(
                         successMessage = "Mascota agregada correctamente",
@@ -49,6 +59,7 @@ class MascotaViewModel(
                     )
                 }
             } catch (e: Exception) {
+                Log.e(TAG, "Error al agregar mascota", e)
                 _uiState.update {
                     it.copy(
                         errorMessage = e.message,
@@ -62,11 +73,14 @@ class MascotaViewModel(
     fun actualizarMascota(mascota: Mascota) {
         viewModelScope.launch {
             try {
+                Log.d(TAG, "Actualizando mascota ID=${mascota.id}")
                 mascotaRepository.update(mascota)
+                Log.i(TAG, "Mascota actualizada correctamente")
                 _uiState.update {
                     it.copy(successMessage = "Mascota actualizada")
                 }
             } catch (e: Exception) {
+                Log.e(TAG, "Error al actualizar mascota", e)
                 _uiState.update {
                     it.copy(errorMessage = e.message)
                 }
@@ -77,11 +91,14 @@ class MascotaViewModel(
     fun eliminarMascota(id: Long) {
         viewModelScope.launch {
             try {
+                Log.d(TAG, "Eliminando mascota ID=$id")
                 mascotaRepository.delete(id)
+                Log.i(TAG, "Mascota eliminada correctamente")
                 _uiState.update {
                     it.copy(successMessage = "Mascota eliminada")
                 }
             } catch (e: Exception) {
+                Log.e(TAG, "Error al eliminar mascota", e)
                 _uiState.update {
                     it.copy(errorMessage = e.message)
                 }
@@ -91,8 +108,6 @@ class MascotaViewModel(
 
     suspend fun getMascotaById(id: Long): Mascota? =
         mascotaRepository.getById(id)
-
-
 }
 
 class MascotaViewModelFactory(
