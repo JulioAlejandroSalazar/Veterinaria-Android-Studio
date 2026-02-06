@@ -2,7 +2,7 @@
 
 Aplicación móvil desarrollada con **Jetpack Compose** para gestionar una veterinaria de manera simple y organizada. La app incluye **sistema de autenticación**, **CRUD completo**, registro de mascotas y consultas, navegación avanzada y el uso de componentes fundamentales de Android como Services, Content Providers, BroadcastReceivers e Intents.
 
-Además, incorpora **persistencia local de datos** para el manejo de una **consulta activa**, accesible desde la pantalla principal incluso sin conexión a internet, junto con **programación asincrónica mediante Coroutines** y **animaciones modernas utilizando LottieFiles** para mejorar la experiencia de usuario.
+Además, incorpora **persistencia local de datos** para el manejo de una **consulta activa**, accesible desde la pantalla principal incluso sin conexión a internet, junto con **programación asincrónica mediante Coroutines**, **animaciones modernas utilizando LottieFiles** y **análisis de uso de memoria** para asegurar un correcto rendimiento de la aplicación.
 
 ---
 
@@ -62,6 +62,30 @@ Además, incorpora **persistencia local de datos** para el manejo de una **consu
 
 ---
 
+## 🧠 Análisis y gestión de memoria
+
+La aplicación fue evaluada utilizando herramientas de análisis de memoria con el objetivo de asegurar un uso eficiente de recursos y prevenir fugas de memoria.
+
+### ✔ Android Profiler
+
+- Se utilizó el **Memory Profiler** de Android Studio.
+- Se analizó el consumo de memoria durante:
+  - Navegación entre pantallas
+  - Ejecución repetida de flujos
+  - Apertura y cierre de actividades
+- El uso de memoria se mantuvo **estable**, sin comportamientos anómalos.
+
+### ✔ LeakCanary
+
+- Se integró **LeakCanary** para la detección automática de fugas de memoria en modo debug.
+- Se ejecutaron flujos críticos de la aplicación.
+- No se detectaron **memory leaks**.
+- No fue necesario realizar correcciones de código, ya que la app cumple con buenas prácticas de gestión de memoria y ciclo de vida.
+
+Este proceso permitió **validar** que la aplicación no presenta fugas de memoria y mantiene un rendimiento adecuado.
+
+---
+
 ## 🛠 Tecnologías utilizadas
 
 - **Kotlin**
@@ -72,6 +96,8 @@ Además, incorpora **persistencia local de datos** para el manejo de una **consu
 - **Kotlin Coroutines**
 - **LottieFiles**
 - **SharedPreferences**
+- **LeakCanary**
+- **Android Profiler**
 - **Java Time API** (`LocalDate`, `LocalTime`)
 - **Services**
 - **Content Providers**
@@ -112,7 +138,7 @@ La aplicación cuenta con un sistema de autenticación que permite:
 - Teléfono numérico
 - Fecha válida
 
-Las operaciones de registro y edición se realizan de forma asincrónica utilizando **Coroutines**, evitando bloqueos en la interfaz y mejorando la fluidez de la aplicación.
+Las operaciones de registro y edición se realizan de forma asincrónica utilizando **Coroutines**, evitando bloqueos en la interfaz.
 
 ---
 
@@ -120,42 +146,22 @@ Las operaciones de registro y edición se realizan de forma asincrónica utiliza
 
 Requiere al menos una mascota registrada.
 
-**Campos:**
-
-- Mascota seleccionada
-- Veterinario
-- Motivo
-- Costo base
-- Fecha (AAAA-MM-DD)
-- Hora (HH:mm)
-
 Incluye:
 
 - Validación completa
-- Uso de `LocalDate` y `LocalTime`
 - Cálculo automático del costo final
 - Persistencia de la **consulta activa**
-- Ejecución asincrónica mediante **Coroutines** para mantener una interfaz responsiva
+- Ejecución asincrónica con **Coroutines**
 
 ---
 
 ### 4. Ver Consultas
 
-Pantalla con listado detallado:
-
-- Mascota
-- Dueño
-- Veterinario
-- Motivo
-- Fecha y hora
-- Costo final
-- Estado
-
-Incluye:
+Listado detallado con:
 
 - Tarjetas Material 3
-- **Botones de editar y eliminar** (CRUD completo)
-- **Compartir consulta** mediante Intent implícito
+- Botones de **editar y eliminar**
+- Opción de **compartir consulta** mediante Intent implícito
 
 ---
 
@@ -163,40 +169,10 @@ Incluye:
 
 Incluye:
 
-- Animaciones de entrada
 - Resumen dinámico
 - Menú superior y lateral
-- Acciones rápidas
-- Acceso a la **consulta activa** mediante diálogo modal
-- Animaciones visuales utilizando **LottieFiles**
-
----
-
-## 📡 Funcionalidades Android añadidas
-
-### ✔ Activities adicionales
-
-Navegación explícita y flujos separados según los requerimientos del sistema.
-
-### ✔ Service en background
-
-Servicio encargado de programar recordatorios y notificaciones automáticas.
-
-### ✔ Content Provider
-
-Exposición de datos de:
-
-- Mascotas
-- Consultas
-
-Permitiendo el acceso desde aplicaciones externas.
-
-### ✔ BroadcastReceiver dinámico
-
-Receiver registrado programáticamente que detecta:
-
-- Cambios en el estado del Wi-Fi
-- Eventos relevantes del sistema
+- Acceso a la **consulta activa**
+- Animaciones visuales con **LottieFiles**
 
 ---
 
