@@ -1,124 +1,165 @@
-# VeterinariaApp
+# 🐾 VeterinariaApp
 
-Aplicación móvil desarrollada con **Jetpack Compose** para gestionar una veterinaria de manera simple y organizada. La app incluye **sistema de autenticación**, **CRUD completo**, registro de mascotas y consultas, navegación avanzada y el uso de componentes fundamentales de Android como Services, Content Providers, BroadcastReceivers e Intents.
+Aplicación móvil desarrollada con **Jetpack Compose** para gestionar una veterinaria de manera moderna, organizada y escalable.
 
-Además, incorpora **persistencia local de datos** para el manejo de una **consulta activa**, accesible desde la pantalla principal incluso sin conexión a internet, junto con **programación asincrónica mediante Coroutines**, **animaciones modernas utilizando LottieFiles** y **análisis de uso de memoria** para asegurar un correcto rendimiento de la aplicación.
+La app incluye **sistema de autenticación**, **CRUD completo**, registro de mascotas y consultas, consumo de API REST, navegación avanzada y el uso de componentes fundamentales de Android como **Services, Content Providers, BroadcastReceivers e Intents**.
 
----
-
-## 📌 Características principales
-
-- **Sistema de autenticación de usuarios**
-  - Registro de usuarios
-  - Inicio de sesión seguro
-  - Validaciones de credenciales
-
-- **CRUD completo (Crear, Leer, Actualizar y Eliminar)**
-  - Gestión completa de mascotas
-  - Gestión completa de consultas
-
-- Registrar mascotas con validaciones completas
-- Registrar consultas solo si existe una mascota registrada
-- Validación de fechas, campos obligatorios y formatos
-- Lista completa y organizada de consultas registradas
-- Cálculo automático del costo final de la consulta
-
-- Pantalla de inicio con **ResumenUI** (mascotas, consultas, último dueño)
-
-- **Animaciones UI**
-  - Animaciones con `AnimatedVisibility`, `fadeIn`, `fadeOut`
-  - Animaciones vectoriales usando **LottieFiles** para estados visuales y feedback al usuario
-
-- Menú superior con navegación entre pantallas
-- Menú lateral tipo hamburguesa con acciones adicionales
-
-- **Visualización de consulta activa**
-  - Accesible desde el menú del Home
-  - Se muestra en un **diálogo modal**
-  - Oscurece el resto de la aplicación
-  - Indica cuando no existe una consulta activa
-  - Persistencia local mediante **SharedPreferences**
-
-- **Navegación Compose** con `NavHostController`
-
-- Arquitectura basada en **Model – ViewModel – UI**
-
-- **Uso de Coroutines**
-  - Operaciones de registro y edición ejecutadas de forma asincrónica
-  - Manejo de estados de carga (`isLoading`)
-  - Uso de `Dispatchers.IO` para operaciones fuera del hilo principal
-
-- **Botones de editar y eliminar** en listas
-
-- **Intents implícitos para compartir información**
-
-- **Content Provider personalizado** para exponer mascotas y consultas
-
-- **BroadcastReceiver dinámico** para detectar cambios de Wi-Fi
-
-- **Service en background** para recordatorios
-
-- **Activities adicionales** para navegación explícita
+Además, incorpora **persistencia local**, **programación asincrónica con Coroutines**, **carga dinámica de imágenes**, **animaciones modernas con LottieFiles** y **análisis de memoria** para asegurar un correcto rendimiento.
 
 ---
 
-## 🧠 Análisis y gestión de memoria
+# 🚀 Características principales
 
-La aplicación fue evaluada utilizando herramientas de análisis de memoria con el objetivo de asegurar un uso eficiente de recursos y prevenir fugas de memoria.
+## 🔐 Sistema de autenticación
 
-### ✔ Android Profiler
-
-- Se utilizó el **Memory Profiler** de Android Studio.
-- Se analizó el consumo de memoria durante:
-  - Navegación entre pantallas
-  - Ejecución repetida de flujos
-  - Apertura y cierre de actividades
-- El uso de memoria se mantuvo **estable**, sin comportamientos anómalos.
-
-### ✔ LeakCanary
-
-- Se integró **LeakCanary** para la detección automática de fugas de memoria en modo debug.
-- Se ejecutaron flujos críticos de la aplicación.
-- No se detectaron **memory leaks**.
-- No fue necesario realizar correcciones de código, ya que la app cumple con buenas prácticas de gestión de memoria y ciclo de vida.
-
-Este proceso permitió **validar** que la aplicación no presenta fugas de memoria y mantiene un rendimiento adecuado.
+- Registro de usuarios
+- Inicio de sesión seguro
+- Validaciones de credenciales
+- Protección de rutas internas
 
 ---
 
-## 🛠 Tecnologías utilizadas
+## 🐶 Gestión completa (CRUD)
 
-- **Kotlin**
-- **Jetpack Compose**
-- **Material 3**
-- **Navigation Compose**
-- **ViewModel + State Hoisting**
-- **Kotlin Coroutines**
-- **LottieFiles**
-- **SharedPreferences**
-- **LeakCanary**
-- **Android Profiler**
-- **Java Time API** (`LocalDate`, `LocalTime`)
-- **Services**
-- **Content Providers**
-- **Broadcast Receivers**
+### 📌 Mascotas
+
+- Crear
+- Editar
+- Eliminar
+- Validaciones completas
+- Formato de fecha correcto
+- Validación de email y teléfono
+
+### 📌 Consultas
+
+- Registro solo si existe mascota
+- Cálculo automático del costo final
+- Persistencia de **consulta activa**
+- Edición y eliminación
+- Compartir consulta vía **Intent implícito**
+
+---
+
+## 👨‍⚕️ Sección: Veterinarios (Consumo de API)
+
+- Pantalla independiente con navegación desde menú hamburguesa
+- Consumo de API REST usando arquitectura ViewModel
+- Manejo de estado de carga (`isLoading`)
+- Indicador visual con `CircularProgressIndicator`
+- Lista con `LazyColumn`
+- Tarjetas Material 3
+- Carga dinámica de imágenes usando:
+  - **RandomUser API**
+  - **Glide Compose**
+- Alternancia automática hombre / mujer en imágenes
+- Fondo personalizado desde `theme/Color.kt`
+
+---
+
+## 🏠 HomeScreen
+
+Incluye:
+
+- Resumen dinámico (ResumenUI)
+- Menú superior (`TopAppBar`)
+- Menú lateral tipo hamburguesa
+- Acceso a la consulta activa
+- Diálogo modal
+- Animaciones con `AnimatedVisibility`
+- Animaciones vectoriales con **LottieFiles**
+
+---
+
+## 💾 Persistencia local
+
+- Uso de **SharedPreferences**
+- Guardado de consulta activa
+- Recuperación automática incluso sin conexión
+
+---
+
+## 🔄 Programación asincrónica
+
+- Uso de **Kotlin Coroutines**
+- Operaciones en `Dispatchers.IO`
+- Manejo de estados de carga
+- UI reactiva con `StateFlow`
+
+---
+
+## 📡 Componentes avanzados de Android
+
+- **Service en background** (recordatorios)
+- **BroadcastReceiver dinámico** (detección de cambios de Wi-Fi)
+- **Content Provider personalizado**
 - **Intents implícitos y explícitos**
+- Activities adicionales
 
 ---
 
-## ⚙ Funcionamiento
+# 🧠 Arquitectura
 
-### 1. Autenticación
+La aplicación sigue una estructura basada en:
 
-La aplicación cuenta con un sistema de autenticación que permite:
-
-- Registro de nuevos usuarios
-- Inicio de sesión con validaciones
-- Protección del acceso a las funcionalidades principales
+- Model – ViewModel – UI
+- State Hoisting
+- Navigation Compose
+- Separación clara de responsabilidades
 
 ---
 
-### 2. Registrar Mascota
+# 🛠 Tecnologías utilizadas
+
+- Kotlin
+- Jetpack Compose
+- Material 3
+- Navigation Compose
+- ViewModel
+- StateFlow
+- Kotlin Coroutines
+- Glide Compose
+- LottieFiles
+- SharedPreferences
+- LeakCanary
+- Android Profiler
+- Java Time API (`LocalDate`, `LocalTime`)
+- Services
+- Broadcast Receivers
+- Content Providers
+- Intents
+
+---
+
+# 🧪 Análisis y gestión de memoria
+
+## ✔ Android Profiler
+
+- Monitoreo de consumo de memoria
+- Navegación repetida entre pantallas
+- Verificación de estabilidad
+
+## ✔ LeakCanary
+
+- Detección automática de memory leaks
+- Pruebas en flujos críticos
+- No se detectaron fugas de memoria
+
+La aplicación mantiene un uso de memoria estable y correcto manejo del ciclo de vida.
+
+---
+
+# ⚙ Funcionamiento
+
+## 1️⃣ Autenticación
+
+- Registro
+- Login
+- Validaciones
+- Protección de rutas
+
+---
+
+## 2️⃣ Registrar Mascota
 
 **Campos solicitados:**
 
@@ -138,45 +179,39 @@ La aplicación cuenta con un sistema de autenticación que permite:
 - Teléfono numérico
 - Fecha válida
 
-Las operaciones de registro y edición se realizan de forma asincrónica utilizando **Coroutines**, evitando bloqueos en la interfaz.
+Las operaciones se ejecutan de forma asincrónica utilizando **Coroutines**, evitando bloqueos en la interfaz.
 
 ---
 
-### 3. Registrar Consulta
+## 3️⃣ Registrar Consulta
 
-Requiere al menos una mascota registrada.
-
-Incluye:
-
+- Requiere al menos una mascota registrada
 - Validación completa
 - Cálculo automático del costo final
-- Persistencia de la **consulta activa**
-- Ejecución asincrónica con **Coroutines**
+- Persistencia de la consulta activa
+- Ejecución asincrónica
 
 ---
 
-### 4. Ver Consultas
-
-Listado detallado con:
+## 4️⃣ Ver Consultas
 
 - Tarjetas Material 3
-- Botones de **editar y eliminar**
-- Opción de **compartir consulta** mediante Intent implícito
+- Botones de editar y eliminar
+- Opción de compartir consulta mediante Intent implícito
 
 ---
 
-### 5. HomeScreen
+## 5️⃣ Ver Veterinarios
 
-Incluye:
-
-- Resumen dinámico
-- Menú superior y lateral
-- Acceso a la **consulta activa**
-- Animaciones visuales con **LottieFiles**
+- Consumo de API
+- Lista dinámica
+- Imágenes remotas
+- Indicador de carga
+- Fondo personalizado
 
 ---
 
-## ▶ Ejecución
+# ▶ Ejecución
 
 1. Clonar el proyecto
 2. Abrir en **Android Studio**
@@ -184,7 +219,7 @@ Incluye:
 
 ---
 
-## 📱 Requisitos
+# 📱 Requisitos
 
 - Android Studio Iguana o superior
 - Kotlin 1.9+

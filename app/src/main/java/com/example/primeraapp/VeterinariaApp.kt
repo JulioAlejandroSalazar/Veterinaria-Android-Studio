@@ -96,5 +96,9 @@ fun VeterinariaApp(
                 consultaViewModel = consultaViewModel
             )
         }
+
+        composable(AppScreen.Veterinarios.route) {
+            VeterinariosScreen(navController)
+        }
     }
 }

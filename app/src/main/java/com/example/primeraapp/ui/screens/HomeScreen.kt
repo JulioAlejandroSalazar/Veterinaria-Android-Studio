@@ -108,6 +108,14 @@ fun HomeScreen(
                         )
 
                         DropdownMenuItem(
+                            text = { Text("Veterinarios") },
+                            onClick = {
+                                menuExpanded = false
+                                navController.navigate(AppScreen.Veterinarios.route)
+                            }
+                        )
+
+                        DropdownMenuItem(
                             text = { Text("Consulta activa") },
                             onClick = {
                                 menuExpanded = false
