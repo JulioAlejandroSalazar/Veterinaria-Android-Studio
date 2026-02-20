@@ -4,7 +4,7 @@ Aplicación móvil desarrollada con **Jetpack Compose** para gestionar una veter
 
 La app incluye **sistema de autenticación**, **CRUD completo**, registro de mascotas y consultas, consumo de API REST, navegación avanzada y el uso de componentes fundamentales de Android como **Services, Content Providers, BroadcastReceivers e Intents**.
 
-Además, incorpora **persistencia local**, **programación asincrónica con Coroutines**, **carga dinámica de imágenes**, **animaciones modernas con LottieFiles** y **análisis de memoria** para asegurar un correcto rendimiento.
+Además, incorpora **persistencia local**, **programación asincrónica con Coroutines**, **carga dinámica de imágenes**, **animaciones modernas con LottieFiles**, **testing unitario e instrumentado** y **análisis de memoria** para asegurar un correcto rendimiento.
 
 ---
 
@@ -87,6 +87,40 @@ Incluye:
 
 ---
 
+## 🧪 Testing
+
+La aplicación incluye pruebas unitarias e instrumentadas.
+
+### ✔ Pruebas Unitarias (`src/test`)
+
+- Test del `MascotaViewModel`
+- Simulación de repositorio usando **MockK**
+- Verificación de:
+  - Actualización correcta del `uiState`
+  - Manejo de éxito
+  - Manejo de errores
+- Uso de:
+  - `kotlinx-coroutines-test`
+  - `StandardTestDispatcher`
+  - `InstantTaskExecutorRule`
+
+Total: **3 pruebas unitarias**
+
+---
+
+### ✔ Pruebas Instrumentadas (`androidTest`)
+
+- Test de pantalla `RegistrarMascotaScreen`
+- Uso de **Compose UI Test**
+- Verificación de:
+  - Renderizado correcto
+  - Interacción con campos
+  - Acciones de botón
+
+Total: **1 prueba funcional**
+
+---
+
 ## 📡 Componentes avanzados de Android
 
 - **Service en background** (recordatorios)
@@ -105,6 +139,7 @@ La aplicación sigue una estructura basada en:
 - State Hoisting
 - Navigation Compose
 - Separación clara de responsabilidades
+- Flujo reactivo con `StateFlow`
 
 ---
 
@@ -120,6 +155,10 @@ La aplicación sigue una estructura basada en:
 - Glide Compose
 - LottieFiles
 - SharedPreferences
+- MockK
+- JUnit
+- kotlinx-coroutines-test
+- Compose UI Test
 - LeakCanary
 - Android Profiler
 - Java Time API (`LocalDate`, `LocalTime`)
